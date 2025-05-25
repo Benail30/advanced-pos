@@ -48,3 +48,14 @@ export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
   return `${text.substring(0, maxLength)}...`
 }
+
+export function generateSKU(category: string): string {
+  // Get the first 3 letters of the category in uppercase
+  const categoryPrefix = category.slice(0, 3).toUpperCase();
+  // Get current timestamp in milliseconds
+  const timestamp = Date.now().toString();
+  // Get last 6 digits of timestamp
+  const uniqueNumber = timestamp.slice(-6);
+  // Combine to create SKU
+  return `${categoryPrefix}-${uniqueNumber}`;
+}

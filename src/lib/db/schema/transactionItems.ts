@@ -1,4 +1,4 @@
-import { pgTable, uuid, decimal, integer } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, integer, decimal, timestamp } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { transactions } from './transactions';
@@ -6,15 +6,17 @@ import { products } from './products';
 
 export const transactionItems = pgTable('transaction_items', {
   id: uuid('id').defaultRandom().primaryKey(),
-  transactionId: uuid('transaction_id').references(() => transactions.id, { onDelete: 'cascade' }),
-  productId: uuid('product_id').references(() => products.id),
+  transactionId: uuid('transaction_id').notNull().references(() => transactions.id, { onDelete: 'cascade' }),
+  productId: uuid('product_id').notNull().references(() => products.id),
   quantity: integer('quantity').notNull(),
   unitPrice: decimal('unit_price', { precision: 10, scale: 2 }).notNull(),
   taxRate: decimal('tax_rate', { precision: 5, scale: 2 }).notNull(),
   taxAmount: decimal('tax_amount', { precision: 10, scale: 2 }).notNull(),
-  discountAmount: decimal('discount_amount', { precision: 10, scale: 2 }).default('0'),
+  discountAmount: decimal('discount_amount', { precision: 10, scale: 2 }).default('0.00'),
   subtotal: decimal('subtotal', { precision: 10, scale: 2 }).notNull(),
   total: decimal('total', { precision: 10, scale: 2 }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
 // Define Zod schemas for validation

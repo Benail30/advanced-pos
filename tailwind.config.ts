@@ -9,6 +9,46 @@ const config: Config = {
   darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
       animation: {
         'bounce-x': 'bounceX 1s infinite',
         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
@@ -65,32 +105,6 @@ const config: Config = {
         'glow': '0 0 15px rgba(66, 153, 225, 0.5)',
         'none': 'none',
       },
-      colors: {
-        gray: {
-          50: '#f9fafb',
-          100: '#f3f4f6',
-          200: '#e5e7eb',
-          300: '#d1d5db',
-          400: '#9ca3af',
-          500: '#6b7280',
-          600: '#4b5563',
-          700: '#374151',
-          800: '#1f2937',
-          900: '#111827',
-        },
-        blue: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-        },
-      },
       backgroundImage: {
         'gradient-to-t': 'linear-gradient(to top, var(--tw-gradient-stops))',
         'gradient-to-tr': 'linear-gradient(to top right, var(--tw-gradient-stops))',
@@ -104,88 +118,10 @@ const config: Config = {
     },
   },
   plugins: [
-    require('tailwindcss/plugin')(({ addUtilities }: { addUtilities: (utilities: Record<string, Record<string, string>>) => void }) => {
-      addUtilities({
-        '.from-blue-600': {
-          '--tw-gradient-from': '#2563eb',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(37 99 235 / 0))'
-        },
-        '.to-purple-600': {
-          '--tw-gradient-to': '#9333ea'
-        },
-        '.from-gray-50': {
-          '--tw-gradient-from': '#f9fafb',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(249 250 251 / 0))'
-        },
-        '.to-gray-100': {
-          '--tw-gradient-to': '#f3f4f6'
-        },
-        '.from-gray-900': {
-          '--tw-gradient-from': '#111827',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(17 24 39 / 0))'
-        },
-        '.to-gray-800': {
-          '--tw-gradient-to': '#1f2937'
-        },
-        '.from-blue-500': {
-          '--tw-gradient-from': '#3b82f6',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(59 130 246 / 0))'
-        },
-        '.to-blue-600': {
-          '--tw-gradient-to': '#2563eb'
-        },
-        '.from-purple-500': {
-          '--tw-gradient-from': '#8b5cf6',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(139 92 246 / 0))'
-        },
-        '.to-purple-600-alt': {
-          '--tw-gradient-to': '#9333ea'
-        },
-        '.from-red-500': {
-          '--tw-gradient-from': '#ef4444',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(239 68 68 / 0))'
-        },
-        '.to-red-600': {
-          '--tw-gradient-to': '#dc2626'
-        },
-        '.from-red-600': {
-          '--tw-gradient-from': '#dc2626',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(220 38 38 / 0))'
-        },
-        '.to-red-700': {
-          '--tw-gradient-to': '#b91c1c'
-        },
-        '.via-purple-500': {
-          '--tw-gradient-stops': 'var(--tw-gradient-from), #8b5cf6, var(--tw-gradient-to, rgb(139 92 246 / 0))'
-        },
-        '.to-pink-500': {
-          '--tw-gradient-to': '#ec4899'
-        },
-        '.from-blue-600/20': {
-          '--tw-gradient-from': 'rgb(37 99 235 / 0.2)',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(37 99 235 / 0))'
-        },
-        '.to-purple-600/20': {
-          '--tw-gradient-to': 'rgb(147 51 234 / 0.2)'
-        },
-        '.from-blue-500/10': {
-          '--tw-gradient-from': 'rgb(59 130 246 / 0.1)',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(59 130 246 / 0))'
-        },
-        '.from-blue-500/20': {
-          '--tw-gradient-from': 'rgb(59 130 246 / 0.2)',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(59 130 246 / 0))'
-        },
-        '.from-purple-500/10': {
-          '--tw-gradient-from': 'rgb(139 92 246 / 0.1)',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(139 92 246 / 0))'
-        },
-        '.from-purple-500/20': {
-          '--tw-gradient-from': 'rgb(139 92 246 / 0.2)',
-          '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to, rgb(139 92 246 / 0))'
-        },
-      })
-    })
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
+    require('tailwindcss-animate'),
   ],
 };
 

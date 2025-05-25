@@ -1,31 +1,61 @@
-import { getSession } from '@auth0/nextjs-auth0';
-import { NextRequest } from 'next/server';
-import { db } from '../db';
-import { users } from '../db/schema';
+import { getSession } from '@auth0/nextjs-auth0/client';
 
-export async function getCurrentUser(req: NextRequest) {
-  const session = await getSession(req);
-  if (!session?.user) return null;
+/**
+ * Hook for checking if a user is logged in using Auth0
+ * This should only be used in React components
+ */
+export function useAuth() {
+  if (typeof window === 'undefined') {
+    return {
+      isLoggedIn: false,
+      user: null,
+      error: null
+    };
+  }
 
-  const user = await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.email, session.user.email),
-  });
-
-  return user;
+  try {
+    const session = getSession();
+    return {
+      isLoggedIn: !!session?.user,
+      user: session?.user || null,
+      error: null
+    };
+  } catch (error) {
+    console.error('Error in auth hook:', error);
+    return {
+      isLoggedIn: false,
+      user: null,
+      error
+    };
+  }
 }
 
-export async function requireAuth(req: NextRequest) {
-  const user = await getCurrentUser(req);
-  if (!user) {
-    throw new Error('Unauthorized');
+/**
+ * Redirects to Auth0 login page
+ */
+export function login() {
+  if (typeof window === 'undefined') {
+    return;
   }
-  return user;
+  
+  try {
+    window.location.href = '/api/auth/login';
+  } catch (error) {
+    console.error('Error during login redirect:', error);
+  }
 }
 
-export async function requireRole(req: NextRequest, role: string) {
-  const user = await requireAuth(req);
-  if (user.role !== role) {
-    throw new Error('Forbidden');
+/**
+ * Logs out the user through Auth0
+ */
+export function logout() {
+  if (typeof window === 'undefined') {
+    return;
   }
-  return user;
-} 
+  
+  try {
+    window.location.href = '/api/auth/logout';
+  } catch (error) {
+    console.error('Error during logout:', error);
+  }
+}

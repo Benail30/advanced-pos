@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard, Wallet, Cash, Receipt, Banknote, Gift } from 'lucide-react';
+import { CreditCard, Wallet, Banknote, Receipt, Gift } from 'lucide-react';
 
 interface CheckoutProps {
   total: number;
@@ -101,7 +101,7 @@ export function Checkout({ total, onComplete }: CheckoutProps) {
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <Cash className="w-6 h-6 mb-2" />
+            <Banknote className="w-6 h-6 mb-2" />
             <span>Cash</span>
           </button>
           <button
@@ -157,7 +157,7 @@ export function Checkout({ total, onComplete }: CheckoutProps) {
             }`}
           >
             <div className="w-6 h-6 mb-2 flex items-center justify-center">
-              <Cash className="w-4 h-4" />
+              <Banknote className="w-4 h-4" />
               <span className="text-xs">+</span>
               <CreditCard className="w-4 h-4" />
             </div>

@@ -1,87 +1,98 @@
 # Advanced POS System
 
-An advanced Point of Sale system with Power BI integration.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18.x or later
-- npm or yarn
-- Auth0 account
-- PostgreSQL database
-- Power BI account (for analytics)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/advanced-pos.git
-cd advanced-pos
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create a `.env.local` file in the root directory with the following variables:
-```env
-NEXT_PUBLIC_AUTH0_DOMAIN=your-auth0-domain
-NEXT_PUBLIC_AUTH0_CLIENT_ID=your-auth0-client-id
-NEXT_PUBLIC_AUTH0_CALLBACK_URL=http://localhost:3000/api/auth/callback
-NEXT_PUBLIC_AUTH0_LOGOUT_URL=http://localhost:3000
-AUTH0_SECRET=your-auth0-secret
-AUTH0_BASE_URL=http://localhost:3000
-AUTH0_ISSUER_BASE_URL=https://your-auth0-domain
-AUTH0_CLIENT_SECRET=your-auth0-client-secret
-DATABASE_URL=your-database-url
-```
-
-4. Run the development server:
-```bash
-npm run dev
-```
-
-## Deployment
-
-### GitHub Setup
-
-1. Create a new repository on GitHub
-2. Push your code:
-```bash
-git remote add origin https://github.com/yourusername/advanced-pos.git
-git push -u origin main
-```
-
-3. Add the following secrets to your GitHub repository:
-   - NEXT_PUBLIC_AUTH0_DOMAIN
-   - NEXT_PUBLIC_AUTH0_CLIENT_ID
-   - NEXT_PUBLIC_AUTH0_CALLBACK_URL
-   - NEXT_PUBLIC_AUTH0_LOGOUT_URL
-   - AUTH0_SECRET
-   - AUTH0_BASE_URL
-   - AUTH0_ISSUER_BASE_URL
-   - AUTH0_CLIENT_SECRET
-   - DATABASE_URL
-
-### Vercel Deployment
-
-1. Go to [Vercel](https://vercel.com) and sign in with your GitHub account
-2. Click "New Project"
-3. Import your GitHub repository
-4. Add the same environment variables as in your `.env.local` file
-5. Click "Deploy"
+A modern, feature-rich Point of Sale system built with Next.js, TypeScript, and Tailwind CSS.
 
 ## Features
 
-- User authentication and authorization
-- Product and inventory management
-- Customer management
-- Sales tracking and reporting
-- Power BI integration for analytics
-- Multi-store support
-- Real-time inventory updates
+- 🛍️ Clean, cashier-focused POS interface
+- 📊 Real-time sales analytics with Power BI integration
+- 👥 Customer management
+- 📦 Inventory management
+- 👤 Role-based access control
+- 💳 Multiple payment methods
+- 📱 Responsive design
+
+## Tech Stack
+
+- **Framework**: Next.js 14 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: Auth0
+- **Analytics**: Power BI
+- **State Management**: React Context + Hooks
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js app router pages
+├── components/       # Reusable UI components
+├── db/              # Database schema and migrations
+├── hooks/           # Custom React hooks
+├── lib/             # Utility functions and configurations
+├── types/           # TypeScript type definitions
+└── middleware.ts    # Next.js middleware
+```
+
+## Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/advanced-pos.git
+   cd advanced-pos
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   - Copy `.env.example` to `.env.local`
+   - Fill in the required environment variables
+
+4. Set up the database:
+   ```bash
+   npm run db:migrate
+   npm run db:seed
+   ```
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Environment Variables
+
+Required environment variables:
+
+```env
+# Auth0 Configuration
+AUTH0_SECRET=
+AUTH0_BASE_URL=
+AUTH0_ISSUER_BASE_URL=
+AUTH0_CLIENT_ID=
+AUTH0_CLIENT_SECRET=
+
+# Database Configuration
+DATABASE_URL=
+
+# Power BI Configuration
+NEXT_PUBLIC_POWERBI_REPORT_ID=
+NEXT_PUBLIC_POWERBI_WORKSPACE_ID=
+NEXT_PUBLIC_POWERBI_REPORT_EMBED_URL=
+```
+
+## Development
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run test` - Run tests
 
 ## Contributing
 
@@ -93,4 +104,4 @@ git push -u origin main
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

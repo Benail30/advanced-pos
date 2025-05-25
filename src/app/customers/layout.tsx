@@ -1,5 +1,9 @@
+'use client';
+
 import React from 'react';
-import Navbar from '@/components/pos/navbar';
+import AuthenticatedLayout from '@/components/layouts/authenticated-layout';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useRouter } from 'next/navigation';
 
 export default function CustomersLayout({
   children,
@@ -7,11 +11,12 @@ export default function CustomersLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1 p-6">
-        {children}
-      </main>
-    </div>
+    <AuthenticatedLayout>
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1 p-6">
+          {children}
+        </main>
+      </div>
+    </AuthenticatedLayout>
   );
 } 

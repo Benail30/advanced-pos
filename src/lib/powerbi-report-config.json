@@ -1,0 +1,84 @@
+{
+  "reportName": "Sales Analytics Dashboard",
+  "visualizations": [
+    {
+      "name": "Sales by Region",
+      "type": "barChart",
+      "config": {
+        "dataFields": {
+          "category": "region",
+          "values": ["revenue", "profit"]
+        },
+        "title": "Sales Performance by Region",
+        "subtitle": "Revenue and Profit Analysis",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "width": 6,
+          "height": 4
+        }
+      }
+    },
+    {
+      "name": "Sales Trend",
+      "type": "lineChart",
+      "config": {
+        "dataFields": {
+          "category": "date",
+          "values": ["revenue"]
+        },
+        "title": "Revenue Trend Over Time",
+        "subtitle": "Daily Sales Analysis",
+        "position": {
+          "x": 6,
+          "y": 0,
+          "width": 6,
+          "height": 4
+        }
+      }
+    },
+    {
+      "name": "Product Performance",
+      "type": "table",
+      "config": {
+        "dataFields": {
+          "columns": ["product", "region", "quantity", "revenue", "profit"]
+        },
+        "title": "Product Sales Summary",
+        "subtitle": "Detailed Product Performance",
+        "position": {
+          "x": 0,
+          "y": 4,
+          "width": 12,
+          "height": 4
+        }
+      }
+    }
+  ],
+  "filters": [
+    {
+      "name": "Date Range",
+      "type": "dateRange",
+      "field": "date"
+    },
+    {
+      "name": "Region",
+      "type": "multiSelect",
+      "field": "region"
+    },
+    {
+      "name": "Product",
+      "type": "multiSelect",
+      "field": "product"
+    }
+  ],
+  "theme": {
+    "name": "Modern",
+    "colors": {
+      "primary": "#0078D4",
+      "secondary": "#2B88D8",
+      "background": "#FFFFFF",
+      "text": "#323130"
+    }
+  }
+} 

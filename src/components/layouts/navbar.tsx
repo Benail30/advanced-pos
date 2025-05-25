@@ -15,57 +15,49 @@ import {
   BarChart3,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Home,
+  BarChart2
 } from 'lucide-react';
+import { UserProfile } from '../auth/user-profile';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
-const navigation = [
-  {
-    name: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    description: 'Overview and analytics'
-  },
-  {
-    name: 'POS',
-    href: '/pos',
-    icon: ShoppingCart,
-    description: 'Point of Sale system'
-  },
-  {
-    name: 'Inventory',
-    href: '/inventory',
-    icon: Package,
-    description: 'Stock management'
-  },
-  {
-    name: 'Customers',
-    href: '/customers',
-    icon: Users,
-    description: 'Customer management'
-  },
-  {
-    name: 'Transactions',
-    href: '/transactions',
-    icon: Receipt,
-    description: 'Transaction history'
-  },
-  {
-    name: 'Reports',
-    href: '/reports',
-    icon: BarChart3,
-    description: 'Analytics and reports'
-  },
-  {
-    name: 'Settings',
-    href: '/settings',
-    icon: Settings,
-    description: 'System configuration'
-  }
+interface NavbarProps {
+  roles?: string[];
+}
+
+// Admin navigation items
+const adminNavigation = [
+  { name: 'Dashboard', href: '/admin', icon: Home },
+  { name: 'Products', href: '/admin/products', icon: Package },
+  { name: 'Customers', href: '/admin/customers', icon: Users },
+  { name: 'Transactions', href: '/admin/transactions', icon: Receipt },
+  { name: 'Reports', href: '/admin/reports', icon: BarChart2 },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
-export default function Navbar() {
-  const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+// Cashier navigation items
+const cashierNavigation = [
+  { name: 'POS Register', href: '/pos/register', icon: ShoppingCart },
+  { name: 'Transactions', href: '/pos/transactions', icon: Receipt },
+  { name: 'Customers', href: '/pos/customers', icon: Users },
+];
+
+export function Navbar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname() || '/';
+  const { user, isLoading } = useUser();
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  // Get navigation items based on user role
+  const navigation = user?.role === 'admin' ? adminNavigation : cashierNavigation;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg dark:border-gray-800 dark:bg-gray-900/75">
@@ -81,10 +73,24 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {/* Mobile menu button */}
+          <button
+            type="button"
+            className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
+            onClick={toggleMobileMenu}
+          >
+            <span className="sr-only">Open main menu</span>
+            {mobileMenuOpen ? (
+              <X className="block h-6 w-6" />
+            ) : (
+              <Menu className="block h-6 w-6" />
+            )}
+          </button>
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
             {navigation.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.name}
@@ -109,53 +115,39 @@ export default function Navbar() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                // TODO: Implement logout
-              }}
+              className="flex items-center space-x-2"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
             </Button>
 
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+            <UserProfile />
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4">
-            <nav className="flex flex-col space-y-2">
+        {mobileMenuOpen && (
+          <div className="lg:hidden">
+            <div className="pt-2 pb-3 space-y-1">
               {navigation.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`flex items-center px-3 py-2 text-base font-medium ${
                       isActive
-                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200'
-                        : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800'
+                        ? 'bg-blue-50 border-blue-500 text-blue-700'
+                        : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
                     }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={closeMobileMenu}
                   >
-                    <span className="flex items-center space-x-2">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.name}</span>
-                    </span>
+                    <item.icon className="h-5 w-5 mr-3" />
+                    {item.name}
                   </Link>
                 );
               })}
-            </nav>
+            </div>
           </div>
         )}
       </div>

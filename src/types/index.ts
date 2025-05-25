@@ -1,17 +1,36 @@
-// Product related types
-export interface Product {
+// Shared types for the application
+
+export interface Customer {
   id: string;
-  name: string;
-  price: number;
-  category: string;
-  image: string;
-  stock: number;
-  description?: string;
-  barcode?: string;
-  cost?: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  loyalty_points: number;
+  date_of_birth: string;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+  total_transactions: number;
+  total_spent: number;
+  last_purchase_date: string;
 }
 
-// Cart related types
+export interface Product {
+  id: string;
+  sku: string;
+  name: string;
+  category: string;
+  currentStock: number;
+  minStockLevel: number;
+  location: string;
+  lastUpdated: string;
+  price?: number;
+  description?: string;
+  image?: string;
+}
+
 export interface CartItem {
   id: string;
   name: string;
@@ -26,22 +45,12 @@ export interface Transaction {
   total: number;
   tax: number;
   subtotal: number;
-  paymentMethod: string;
-  date: string;
   customerId?: string;
-  status: 'completed' | 'refunded' | 'pending';
-}
-
-// Customer related types
-export interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  totalOrders: number;
-  totalSpent: number;
-  lastOrder?: string;
+  customerName?: string;
+  paymentMethod: string;
+  reference?: string;
+  createdAt: string;
+  status: 'pending' | 'completed' | 'cancelled' | 'refunded';
 }
 
 // Dashboard related types

@@ -1,23 +1,24 @@
-import React from 'react';
-import Navbar from '@/components/pos/navbar';
-import type { Metadata } from "next";
+'use client';
 
-export const metadata: Metadata = {
-  title: "POS | Advanced POS",
-  description: "Point of Sale interface for the Advanced POS system",
-};
+import { ReactNode } from 'react';
+import AuthenticatedLayout from '@/components/layouts/authenticated-layout';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useRouter } from 'next/navigation';
 
-export default function PosLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface PosLayoutProps {
+  children: ReactNode;
+}
+
+export default function PosLayout({ children }: PosLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1">
-        {children}
-      </main>
-    </div>
+    <AuthenticatedLayout>
+      <div className="flex min-h-screen bg-gray-50">
+        <div className="flex-1 flex flex-col md:ml-64">
+          <main className="flex-1 p-4 md:p-6">
+            {children}
+          </main>
+        </div>
+      </div>
+    </AuthenticatedLayout>
   );
 } 

@@ -1,17 +1,32 @@
-import { getSession } from '@auth0/nextjs-auth0';
-import { NextRequest } from 'next/server';
+// Simple client-side session management
+import { getSession as getAuth0Session } from '@auth0/nextjs-auth0/client';
 
-export async function getSessionUser(req: NextRequest) {
-  const session = await getSession(req);
+export function getSession() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  
+  try {
+    const session = getAuth0Session();
+    return session;
+  } catch (error) {
+    console.error('Error getting session:', error);
+    return null;
+  }
+}
+
+// Client-side versions of the server functions
+export function getSessionUser() {
+  const session = getSession();
   return session?.user;
 }
 
-export async function isAuthenticated(req: NextRequest) {
-  const session = await getSession(req);
+export function isAuthenticated() {
+  const session = getSession();
   return !!session?.user;
 }
 
-export async function getUserRoles(req: NextRequest) {
-  const session = await getSession(req);
-  return session?.user?.['https://pos.example.com/roles'] || [];
-} 
+export function getUserRoles() {
+  const session = getSession();
+  return session?.user?.roles || [];
+}

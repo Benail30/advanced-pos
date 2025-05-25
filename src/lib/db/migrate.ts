@@ -1,33 +1,33 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { Pool } from 'pg';
-import * as dotenv from 'dotenv';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import postgres from 'postgres';
+import dotenv from 'dotenv';
 
-// Load environment variables
 dotenv.config();
 
-const pool = new Pool({
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: Number(process.env.DATABASE_PORT) || 5432,
-  database: process.env.DATABASE_NAME || 'pos_db',
-  user: process.env.DATABASE_USER || 'postgres',
-  password: process.env.DATABASE_PASSWORD || 'postgres',
-});
+// Get connection string from environment variable
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/pos_db';
 
-const db = drizzle(pool);
+// Create a connection instance
+const sql = postgres(connectionString, { max: 1 });
 
-async function main() {
-  console.log('Running migrations...');
+// Create Drizzle instance
+const db = drizzle(sql);
+
+// Run migrations
+async function runMigrations() {
+  console.log('Running database migrations...');
   
-  await migrate(db, {
-    migrationsFolder: 'src/lib/db/migrations',
-  });
-
-  console.log('Migrations completed successfully!');
-  await pool.end();
+  try {
+    await migrate(db, { migrationsFolder: 'drizzle' });
+    console.log('Migrations completed successfully');
+  } catch (error) {
+    console.error('Migration failed:', error);
+    process.exit(1);
+  } finally {
+    await sql.end();
+  }
 }
 
-main().catch((err) => {
-  console.error('Migration failed!', err);
-  process.exit(1);
-}); 
+// Run the migration function
+runMigrations(); 

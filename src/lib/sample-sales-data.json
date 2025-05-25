@@ -1,0 +1,100 @@
+{
+  "sales": [
+    {
+      "date": "2024-01-01",
+      "region": "North",
+      "product": "Laptop",
+      "quantity": 15,
+      "revenue": 22500,
+      "profit": 6750
+    },
+    {
+      "date": "2024-01-01",
+      "region": "South",
+      "product": "Laptop",
+      "quantity": 12,
+      "revenue": 18000,
+      "profit": 5400
+    },
+    {
+      "date": "2024-01-01",
+      "region": "East",
+      "product": "Laptop",
+      "quantity": 18,
+      "revenue": 27000,
+      "profit": 8100
+    },
+    {
+      "date": "2024-01-01",
+      "region": "West",
+      "product": "Laptop",
+      "quantity": 10,
+      "revenue": 15000,
+      "profit": 4500
+    },
+    {
+      "date": "2024-01-02",
+      "region": "North",
+      "product": "Smartphone",
+      "quantity": 25,
+      "revenue": 25000,
+      "profit": 7500
+    },
+    {
+      "date": "2024-01-02",
+      "region": "South",
+      "product": "Smartphone",
+      "quantity": 20,
+      "revenue": 20000,
+      "profit": 6000
+    },
+    {
+      "date": "2024-01-02",
+      "region": "East",
+      "product": "Smartphone",
+      "quantity": 30,
+      "revenue": 30000,
+      "profit": 9000
+    },
+    {
+      "date": "2024-01-02",
+      "region": "West",
+      "product": "Smartphone",
+      "quantity": 22,
+      "revenue": 22000,
+      "profit": 6600
+    },
+    {
+      "date": "2024-01-03",
+      "region": "North",
+      "product": "Tablet",
+      "quantity": 18,
+      "revenue": 18000,
+      "profit": 5400
+    },
+    {
+      "date": "2024-01-03",
+      "region": "South",
+      "product": "Tablet",
+      "quantity": 15,
+      "revenue": 15000,
+      "profit": 4500
+    },
+    {
+      "date": "2024-01-03",
+      "region": "East",
+      "product": "Tablet",
+      "quantity": 20,
+      "revenue": 20000,
+      "profit": 6000
+    },
+    {
+      "date": "2024-01-03",
+      "region": "West",
+      "product": "Tablet",
+      "quantity": 12,
+      "revenue": 12000,
+      "profit": 3600
+    }
+  ]
+} 

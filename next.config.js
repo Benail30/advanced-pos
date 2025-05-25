@@ -1,17 +1,54 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Configure page extensions
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  // Enable strict mode
   reactStrictMode: true,
+  // Enable SWC minification
   swcMinify: true,
+  // Configure images
   images: {
-    domains: ['localhost'],
+    domains: [
+      's.gravatar.com',
+      'cdn.auth0.com',
+      'images.unsplash.com',
+    ],
   },
-  // Enable static exports if needed
-  // output: 'export',
-  // Enable experimental features if needed
-  experimental: {
-    // appDir: true,
-    // serverActions: true,
+  // Configure webpack
+  webpack: (config) => {
+    // Important: Return the modified config
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      net: false,
+      tls: false,
+      fs: false,
+      crypto: false,
+      path: false,
+      os: false,
+      stream: false,
+    };
+    
+    return config;
   },
+  // Configure redirects
+  async redirects() {
+    return [
+      {
+        source: '/pages/:path*',
+        destination: '/:path*',
+        permanent: true,
+      },
+    ];
+  },
+  // Configure rewrites
+  async rewrites() {
+    return [
+      {
+        source: '/api/auth/:path*',
+        destination: '/api/auth/:path*',
+      },
+    ];
+  }
 };
 
 module.exports = nextConfig; 

@@ -1,93 +1,103 @@
-import { db } from '../index';
-import * as schema from '../schema';
-import * as crypto from 'crypto';
-
-/**
- * Simple hash function for creating password hashes
- * In a production app, use bcrypt or similar
- */
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
+import { db } from '../../../db';
+import { stores, users, categories, products } from '../../../db/schema';
+import { userRoleEnum } from '../../../db/schema';
+import { randomUUID } from 'crypto';
 
 async function seed() {
   console.log('🌱 Starting database seeding...');
-  
+
   try {
-    // Check if we already have data
-    const existingStores = await db.select().from(schema.stores).limit(1);
-    
-    if (existingStores.length > 0) {
-      console.log('Database already has data, skipping seed');
-      return;
-    }
-    
-    // Create a default store
-    const [store] = await db.insert(schema.stores).values({
+    // Create default store
+    console.log('Creating default store...');
+    const [defaultStore] = await db.insert(stores).values({
       name: 'Main Store',
-      address: '123 Main St',
-      city: 'New York',
-      state: 'NY',
-      zipCode: '10001',
-      phone: '555-123-4567',
+      address: '123 Main Street, City',
+      phone: '123-456-7890',
       email: 'store@example.com',
-      active: true,
+      tax_id: '12345678',
     }).returning();
-    
-    console.log('Created store:', store.name);
-    
+
+    if (!defaultStore) {
+      throw new Error('Failed to create default store');
+    }
+
+    console.log(`Default store created with ID: ${defaultStore.id}`);
+
     // Create admin user
-    const [user] = await db.insert(schema.users).values({
+    console.log('Creating admin user...');
+    await db.insert(users).values({
       email: 'admin@example.com',
-      passwordHash: hashPassword('admin123'), // In production, use proper password hashing!
-      firstName: 'Admin',
-      lastName: 'User',
+      password_hash: '$2a$12$DQtFNjxHLEjOsAqxD9fXWOCB.ve2Q8eUzuLwDrLp7YF2pCyXmxpLm', // hashed password: Admin123!
+      first_name: 'Admin',
+      last_name: 'User',
       role: 'admin',
-      storeId: store.id,
-      active: true,
+      store_id: defaultStore.id,
+    });
+
+    // Create sample categories
+    console.log('Creating sample categories...');
+    const [electronicsCategory] = await db.insert(categories).values({
+      name: 'Electronics',
+      description: 'Electronic devices and accessories',
     }).returning();
-    
-    console.log('Created admin user:', user.email);
-    
-    // Create a sample category
-    const [category] = await db.insert(schema.categories).values({
-      name: 'General',
-      description: 'General products',
-      active: true,
+
+    const [clothingCategory] = await db.insert(categories).values({
+      name: 'Clothing',
+      description: 'Shirts, pants, and other apparel',
     }).returning();
-    
-    console.log('Created category:', category.name);
-    
-    // Create a sample product
-    const [product] = await db.insert(schema.products).values({
-      name: 'Sample Product',
-      description: 'This is a sample product',
-      sku: 'SAMPLE001',
-      barcode: '1234567890123',
-      price: 9.99,
-      cost: 5.99,
-      categoryId: category.id,
-      active: true,
-      taxable: true,
-      taxRate: 0.07,
-    }).returning();
-    
-    console.log('Created product:', product.name);
-    
-    console.log('✅ Database seeding completed successfully');
+
+    // Create sample products
+    console.log('Creating sample products...');
+    await db.insert(products).values([
+      {
+        sku: 'PROD-001',
+        barcode: '123456789',
+        name: 'Smartphone',
+        description: 'High-end smartphone with great camera',
+        price: '699.99',
+        cost_price: '450.00',
+        category_id: electronicsCategory.id,
+        tax_rate: '7.5',
+        stock_quantity: 25,
+        min_stock_level: 5,
+      },
+      {
+        sku: 'PROD-002',
+        barcode: '987654321',
+        name: 'Laptop',
+        description: 'Powerful laptop for work and gaming',
+        price: '1299.99',
+        cost_price: '900.00',
+        category_id: electronicsCategory.id,
+        tax_rate: '7.5',
+        stock_quantity: 15,
+        min_stock_level: 3,
+      },
+      {
+        sku: 'PROD-003',
+        barcode: '456789123',
+        name: 'T-Shirt',
+        description: 'Cotton t-shirt, very comfortable',
+        price: '19.99',
+        cost_price: '5.00',
+        category_id: clothingCategory.id,
+        tax_rate: '5.0',
+        stock_quantity: 100,
+        min_stock_level: 20,
+      },
+    ]);
+
+    console.log('✅ Seed completed successfully!');
   } catch (error) {
-    console.error('❌ Seeding error:', error);
+    console.error('❌ Seed failed:', error);
+    process.exit(1);
   }
 }
 
-// Run seed function if this file is executed directly
-if (require.main === module) {
-  seed()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error('Unhandled error during seeding:', error);
-      process.exit(1);
-    });
-}
-
-export { seed }; 
+// Run the seed function
+seed()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error('Unhandled error during seeding:', error);
+    process.exit(1);
+  }); 

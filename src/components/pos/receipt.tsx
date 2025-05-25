@@ -1,107 +1,128 @@
 'use client';
 
+import { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
+import type { UseReactToPrintOptions } from 'react-to-print';
+import { Button } from '@/components/ui/button';
 import { Printer } from 'lucide-react';
 
 interface ReceiptProps {
-  items: {
-    name: string;
-    quantity: number;
-    price: number;
-  }[];
-  subtotal: number;
-  tax: number;
-  total: number;
-  paymentMethod: string;
-  paymentReference?: string;
-  change?: number;
-  transactionNumber: string;
-  date: string;
-  cashier: string;
+  transaction: {
+    id: string;
+    transaction_number: string;
+    created_at: string;
+    items: Array<{
+      name: string;
+      quantity: number;
+      unit_price: number;
+      subtotal: number;
+    }>;
+    subtotal: number;
+    tax_amount: number;
+    total_amount: number;
+    payment_method: string;
+  };
 }
 
-export function Receipt({
-  items,
-  subtotal,
-  tax,
-  total,
-  paymentMethod,
-  paymentReference,
-  change,
-  transactionNumber,
-  date,
-  cashier
-}: ReceiptProps) {
-  const handlePrint = () => {
-    window.print();
-  };
+export function Receipt({ transaction }: ReceiptProps) {
+  const receiptRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    documentTitle: 'Receipt',
+    pageStyle: `
+      @page {
+        size: 80mm 297mm;
+        margin: 0;
+      }
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    `,
+    content: () => receiptRef.current,
+  } as UseReactToPrintOptions);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm max-w-md mx-auto">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold">RECEIPT</h2>
-        <p className="text-sm text-gray-600">Transaction #{transactionNumber}</p>
-        <p className="text-sm text-gray-600">{date}</p>
-        <p className="text-sm text-gray-600">Cashier: {cashier}</p>
-      </div>
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div ref={receiptRef} className="max-w-sm mx-auto">
+        {/* Receipt Header */}
+        <div className="text-center mb-4">
+          <h2 className="text-xl font-bold">Your Store Name</h2>
+          <p className="text-sm text-gray-500">123 Store Street</p>
+          <p className="text-sm text-gray-500">Phone: (123) 456-7890</p>
+        </div>
 
-      <div className="border-t border-b border-gray-200 py-4">
-        {items.map((item, index) => (
-          <div key={index} className="flex justify-between mb-2">
-            <div>
-              <span className="font-medium">{item.name}</span>
-              <span className="text-gray-600 ml-2">x{item.quantity}</span>
+        {/* Transaction Info */}
+        <div className="border-t border-b py-2 mb-4">
+          <p className="text-sm">
+            Receipt #: {transaction.transaction_number}
+          </p>
+          <p className="text-sm">
+            Date: {new Date(transaction.created_at).toLocaleString()}
+          </p>
+        </div>
+
+        {/* Items */}
+        <div className="mb-4">
+          <div className="grid grid-cols-12 text-sm font-medium mb-2">
+            <div className="col-span-6">Item</div>
+            <div className="col-span-2 text-right">Qty</div>
+            <div className="col-span-2 text-right">Price</div>
+            <div className="col-span-2 text-right">Total</div>
+          </div>
+          {transaction.items.map((item, index) => (
+            <div key={index} className="grid grid-cols-12 text-sm mb-1">
+              <div className="col-span-6">{item.name}</div>
+              <div className="col-span-2 text-right">{item.quantity}</div>
+              <div className="col-span-2 text-right">
+                ${item.unit_price.toFixed(2)}
+              </div>
+              <div className="col-span-2 text-right">
+                ${item.subtotal.toFixed(2)}
+              </div>
             </div>
-            <span>${(item.price * item.quantity).toFixed(2)}</span>
+          ))}
+        </div>
+
+        {/* Totals */}
+        <div className="border-t pt-2 mb-4">
+          <div className="flex justify-between text-sm mb-1">
+            <span>Subtotal:</span>
+            <span>${transaction.subtotal.toFixed(2)}</span>
           </div>
-        ))}
-      </div>
-
-      <div className="mt-4 space-y-2">
-        <div className="flex justify-between">
-          <span>Subtotal:</span>
-          <span>${subtotal.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Tax:</span>
-          <span>${tax.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between font-bold text-lg">
-          <span>Total:</span>
-          <span>${total.toFixed(2)}</span>
-        </div>
-      </div>
-
-      <div className="mt-6 pt-4 border-t border-gray-200">
-        <div className="flex justify-between mb-2">
-          <span className="text-gray-600">Payment Method:</span>
-          <span className="font-medium">{paymentMethod}</span>
-        </div>
-        {paymentReference && (
-          <div className="flex justify-between mb-2">
-            <span className="text-gray-600">Reference:</span>
-            <span className="font-medium">{paymentReference}</span>
+          <div className="flex justify-between text-sm mb-1">
+            <span>Tax (10%):</span>
+            <span>${transaction.tax_amount.toFixed(2)}</span>
           </div>
-        )}
-        {change !== undefined && change > 0 && (
-          <div className="flex justify-between">
-            <span className="text-gray-600">Change:</span>
-            <span className="font-medium text-green-600">${change.toFixed(2)}</span>
+          <div className="flex justify-between font-bold">
+            <span>Total:</span>
+            <span>${transaction.total_amount.toFixed(2)}</span>
           </div>
-        )}
+        </div>
+
+        {/* Payment Info */}
+        <div className="border-t pt-2 mb-4">
+          <p className="text-sm">
+            Payment Method: {transaction.payment_method}
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center text-sm text-gray-500">
+          <p>Thank you for your purchase!</p>
+          <p>Please come again</p>
+        </div>
       </div>
 
-      <div className="mt-8 text-center text-sm text-gray-500">
-        <p>Thank you for your purchase!</p>
-        <p>Please come again</p>
+      {/* Print Button */}
+      <div className="mt-4 flex justify-center">
+        <Button onClick={handlePrint} className="flex items-center gap-2">
+          <Printer className="h-4 w-4" />
+          Print Receipt
+        </Button>
       </div>
-
-      <button
-        onClick={handlePrint}
-        className="mt-6 w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 flex items-center justify-center gap-2"
-      >
-        <Printer className="w-4 h-4" />
-        Print Receipt
-      </button>
     </div>
   );
 } 
