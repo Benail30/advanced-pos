@@ -1,33 +1,21 @@
-import { handleAuth } from '@auth0/nextjs-auth0';
+import { handleAuth, handleLogin } from '@auth0/nextjs-auth0';
+import type { NextRequest } from 'next/server';
 
-export const GET = handleAuth();
-export const POST = handleAuth();
+export const runtime = 'nodejs';
 
-export async function POST(
-  request: Request,
-  context: { params: { auth0: string } }
-) {
-  try {
-    const { auth0 } = await Promise.resolve(context.params);
-    console.log('Auth route called:', auth0);
-    console.log('Request URL:', request.url);
-    return await handleAuth()(request, { params: { auth0 } });
-  } catch (error: any) {
-    console.error('Auth error details:', {
-      message: error?.message || 'Unknown error',
-      stack: error?.stack,
-      params: context.params,
-      url: request.url
-    });
-    return new Response(JSON.stringify({ 
-      error: 'Authentication failed',
-      details: error?.message || 'Unknown error',
-      route: context.params.auth0
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  }
+const auth = handleAuth({
+  login: handleLogin({
+    authorizationParams: {
+      prompt: 'login',  // Force login prompt even if session exists
+      scope: 'openid profile email'
+    }
+  })
+});
+
+export async function GET(req: NextRequest, ctx: { params: { auth0: string[] } }) {
+  return auth(req, ctx);
+}
+
+export async function POST(req: NextRequest, ctx: { params: { auth0: string[] } }) {
+  return auth(req, ctx);
 } 

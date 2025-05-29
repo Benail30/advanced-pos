@@ -1,3 +1,5 @@
+'use client';
+
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button } from './ui/button';
 import {
@@ -9,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Loader2 } from 'lucide-react';
+import { Shield, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 export function UserProfile() {
@@ -40,6 +42,9 @@ export function UserProfile() {
         .toUpperCase()
     : 'U';
 
+  const userRoles = user['https://advanced-pos.com/roles'] as string[] || [];
+  const isAdmin = userRoles.some(role => role.toLowerCase() === 'admin');
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,6 +53,13 @@ export function UserProfile() {
             <AvatarImage src={user.picture || undefined} alt={user.name || 'User avatar'} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
+          <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-white flex items-center justify-center">
+            {isAdmin ? (
+              <Shield className="h-3 w-3 text-primary" />
+            ) : (
+              <ShoppingCart className="h-3 w-3 text-muted-foreground" />
+            )}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -57,15 +69,36 @@ export function UserProfile() {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            <div className="flex items-center gap-1 mt-1">
+              {isAdmin ? (
+                <Shield className="h-3 w-3 text-primary" />
+              ) : (
+                <ShoppingCart className="h-3 w-3 text-muted-foreground" />
+              )}
+              <p className="text-xs leading-none text-muted-foreground">
+                {isAdmin ? 'Administrator' : 'Cashier'}
+              </p>
+            </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/dashboard">Dashboard</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings">Settings</Link>
-        </DropdownMenuItem>
+        {isAdmin ? (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/admin">Dashboard</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/inventory">Inventory</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/settings">Settings</Link>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem asChild>
+            <Link href="/pos">Point of Sale</Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/api/auth/logout">Sign Out</Link>

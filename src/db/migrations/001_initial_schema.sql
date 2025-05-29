@@ -1,0 +1,24 @@
+-- Create categories table
+CREATE TABLE IF NOT EXISTS categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create products table
+CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    stock INTEGER NOT NULL DEFAULT 0,
+    minimum_stock INTEGER NOT NULL DEFAULT 0,
+    category_id INTEGER REFERENCES categories(id),
+    sku VARCHAR(255) UNIQUE NOT NULL,
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+); 

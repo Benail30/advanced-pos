@@ -1,0 +1,129 @@
+\chapter{General Project Framework}
+
+\section{Introduction}
+
+In a constantly evolving digital economy, businesses are increasingly turning to software systems to automate operational processes, improve productivity, and gain competitive advantage. Among these, Point of Sale (POS) systems have become essential in the retail sector, providing functionality for transaction processing, inventory tracking, invoicing, and decision-making support.
+
+This report documents the development of a modern web-based POS system created as part of a final-year internship required for the Business Intelligence degree. The internship was carried out remotely in collaboration with \textbf{Synthron Lab}, a software development company specializing in custom web applications and data-driven solutions.
+
+\section{Host Organization}
+
+\textbf{Synthron Lab} is a Tunisian software company that offers development and consulting services focused on modern technologies. The company builds full-stack web applications and integrates third-party platforms such as Power BI, Auth0, and cloud services to support both operational and strategic needs.
+
+Its team is known for working with cutting-edge tools like React, Next.js, PostgreSQL, and scalable data architecture. Synthron Lab collaborates with both local and international clients in the retail, logistics, and analytics sectors.
+
+\section{Project Description}
+
+The project consists of designing and developing a web-based \textbf{Point of Sale (POS)} system targeted at small and medium-sized retailers. It allows:
+
+\begin{itemize}
+  \item \textbf{Cashiers} to log in, browse products, add them to a cart, process payments, and generate invoices.
+  \item \textbf{Administrators} to manage products, update inventory, and access live dashboards for business insights.
+  \item \textbf{Secure access control} using authentication with dynamic role-based redirection.
+\end{itemize}
+
+The system offers a responsive and user-friendly interface and integrates business intelligence through an embedded Power BI dashboard for the admin users.
+
+\section{Study of Existing Solutions}
+
+An analysis of existing POS solutions highlights several limitations:
+\begin{itemize}
+  \item Many interfaces are outdated and not mobile-friendly.
+  \item Most systems lack built-in business intelligence capabilities.
+  \item Traditional POS tools are often heavy, require installation, and are not cloud-accessible.
+  \item Local solutions may be difficult to maintain or scale.
+\end{itemize}
+
+The proposed system addresses these problems by delivering a lightweight, web-accessible POS application that’s easy to deploy, maintain, and integrate.
+
+\section{Proposed Solution}
+
+The proposed solution is a fullstack JavaScript web application built with:
+\begin{itemize}
+  \item \textbf{Next.js} for routing, backend API, and page rendering.
+  \item \textbf{React} for modular, component-based UI development.
+  \item \textbf{Tailwind CSS} for fast, responsive UI styling.
+  \item \textbf{PostgreSQL} for database management and transactional integrity.
+  \item \textbf{Auth0} for secure authentication and session handling.
+  \item \textbf{Power BI} for embedded analytics and decision dashboards.
+\end{itemize}
+
+Upon login, users are redirected based on their role. Cashiers access the POS dashboard, and administrators access an analytics panel with product and transaction management tools. Invoices are generated as downloadable PDFs with QR codes, and the system updates stock quantities in real time.
+
+\section{Project Objectives}
+
+The core objectives of the project are:
+\begin{itemize}
+  \item Develop a responsive, modular POS application.
+  \item Provide secure authentication with dynamic role management.
+  \item Enable real-time stock management and product control.
+  \item Automate invoice generation with integrated QR codes.
+  \item Deliver integrated decision support through Power BI dashboards.
+\end{itemize}
+
+\section{Project Management Methodology}
+
+The project was conducted using the \textbf{Scrum} agile methodology. Scrum promotes iterative development cycles known as \textit{sprints}, each delivering a working software increment. This allowed for focused development, fast feedback, and continuous improvement.
+
+\subsection*{Sprint Planning}
+
+The project was divided into the following five sprints:
+\begin{itemize}
+  \item \textbf{Sprint 0 –} Requirements gathering, existing system analysis, architecture planning.
+  \item \textbf{Sprint 1 –} Implementation of authentication and role-based redirection.
+  \item \textbf{Sprint 2 –} Development of cashier dashboard and product cart system.
+  \item \textbf{Sprint 3 –} Invoice generation, stock updates, and PDF generation.
+  \item \textbf{Sprint 4 –} Admin dashboard integration with Power BI analytics.
+\end{itemize}
+
+Each sprint lasted approximately one week and followed the Scrum lifecycle: sprint planning, execution, testing, and review.
+
+\section{Modeling Languages Used}
+
+To plan and document the architecture and flow of the system, \textbf{UML (Unified Modeling Language)} was used. The following types of diagrams were created using PlantUML:
+
+\begin{itemize}
+  \item \textbf{Use Case Diagrams} – To identify system actors and interactions.
+  \item \textbf{Sequence Diagrams} – To describe system workflows and communication.
+  \item \textbf{Class Diagrams} – To define the data structure and relationships between entities.
+\end{itemize}
+
+\textbf{BPMN (Business Process Model and Notation)} was not used in this project, but is acknowledged as a standard for process modeling. If the project were extended to include business process automation, BPMN diagrams could be applied for workflow definition.
+
+\section{Conclusion}
+
+This first chapter has introduced the overall framework of the project, including the host organization, project scope, existing system analysis, goals, and methodology. The following chapter will present the expression of functional and technical requirements, technical architecture, and development environment setup as part of Sprint 0.
+\section*{SWOT Analysis – POS System}
+\addcontentsline{toc}{section}{SWOT Analysis – POS System}
+
+\textbf{Strengths}
+\begin{itemize}
+  \item Web-based and responsive design accessible from any device
+  \item Secure authentication and role-based access control via Auth0
+  \item Embedded analytics with Microsoft Power BI for real-time insights
+  \item Modern tech stack (React, Next.js, Tailwind CSS, PostgreSQL)
+\end{itemize}
+
+\textbf{Weaknesses}
+\begin{itemize}
+  \item No native mobile application
+  \item Does not currently support barcode scanning or receipt printers
+  \item Limited user role granularity beyond admin/cashier
+  \item Requires internet connectivity for all features (no offline mode)
+\end{itemize}
+
+\textbf{Opportunities}
+\begin{itemize}
+  \item Add support for new hardware: barcode scanners, printers, cash drawers
+  \item Expand to mobile app or PWA (Progressive Web App)
+  \item Introduce role editor and multi-store functionality
+  \item Enhance analytics with predictive dashboards or AI integration
+\end{itemize}
+
+\textbf{Threats}
+\begin{itemize}
+  \item Security risks related to token handling or authentication leaks
+  \item Performance issues under large-scale use without optimization
+  \item Competitive POS platforms offering similar features
+  \item Risk of dependency on external tools like Power BI or Auth0 pricing
+\end{itemize}

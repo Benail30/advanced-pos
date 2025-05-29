@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface CartItem {
-  productId: string;
+  id: string;
   name: string;
   price: number;
   quantity: number;
@@ -12,92 +12,78 @@ interface CartItem {
 
 interface CartProps {
   items: CartItem[];
-  onRemove: (productId: string) => void;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
+  onRemoveItem: (id: string) => void;
   onCheckout: () => void;
 }
 
-export function Cart({ items, onRemove, onUpdateQuantity, onCheckout }: CartProps) {
-  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
-
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax = subtotal * 0.1; // 10% tax
+export default function Cart({ items, onUpdateQuantity, onRemoveItem, onCheckout }: CartProps) {
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const taxRate = 8.25; // 8.25%
+  const tax = (subtotal * taxRate) / 100;
   const total = subtotal + tax;
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold">Cart</h2>
+    <div className="bg-white rounded-lg shadow-lg p-6 min-h-[calc(100vh-8rem)]">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Cart</h2>
       </div>
 
-      <div className="flex-1 overflow-auto p-4">
-        {items.length === 0 ? (
-          <p className="text-gray-500 text-center">Cart is empty</p>
-        ) : (
-          <div className="space-y-4">
-            {items.map((item) => (
-              <div
-                key={item.productId}
-                className="flex items-center justify-between p-2 bg-gray-50 rounded"
+      <div className="space-y-4 mb-6 flex-1 min-h-[calc(100vh-24rem)] overflow-auto">
+        {items.map((item) => (
+          <div key={item.id} className="flex items-center justify-between py-2 border-b">
+            <div className="flex-1">
+              <h3 className="font-medium">{item.name}</h3>
+              <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => onUpdateQuantity(item.id, Math.max(0, item.quantity - 1))}
+                className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded"
               >
-                <div className="flex-1">
-                  <h3 className="font-medium">{item.name}</h3>
-                  <p className="text-sm text-gray-500">
-                    ${item.price.toFixed(2)} × {item.quantity}
-                  </p>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => onUpdateQuantity(item.productId, item.quantity - 1)}
-                    className="p-1 hover:bg-gray-200 rounded"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="w-8 text-center">{item.quantity}</span>
-                  <button
-                    onClick={() => onUpdateQuantity(item.productId, item.quantity + 1)}
-                    className="p-1 hover:bg-gray-200 rounded"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => onRemove(item.productId)}
-                    className="p-1 text-red-500 hover:bg-red-50 rounded"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+                −
+              </button>
+              <span className="w-8 text-center">{item.quantity}</span>
+              <button
+                onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded"
+              >
+                +
+              </button>
+              <button
+                onClick={() => onRemoveItem(item.id)}
+                className="text-red-500 hover:text-red-700 p-1"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
           </div>
-        )}
+        ))}
       </div>
 
-      <div className="p-4 border-t border-gray-200">
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Tax (10%)</span>
-            <span>${tax.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between font-semibold">
-            <span>Total</span>
-            <span>${total.toFixed(2)}</span>
-          </div>
+      <div className="border-t pt-4 space-y-2">
+        <div className="flex justify-between text-sm">
+          <span>Subtotal</span>
+          <span>${subtotal.toFixed(2)}</span>
         </div>
-
-        <button
-          onClick={onCheckout}
-          disabled={items.length === 0}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
-          Checkout
-        </button>
+        <div className="flex justify-between text-sm">
+          <span>Tax ({taxRate}%)</span>
+          <span>${tax.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between font-bold text-lg pt-2 border-t">
+          <span>Total</span>
+          <span>${total.toFixed(2)}</span>
+        </div>
       </div>
+
+      <Button
+        className="w-full mt-6"
+        size="lg"
+        onClick={onCheckout}
+        disabled={items.length === 0}
+      >
+        Proceed to Checkout
+      </Button>
     </div>
   );
 } 

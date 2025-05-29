@@ -1,128 +1,192 @@
-import { NextResponse } from 'next/server';
-import { Customer } from '@/types';
+import { NextRequest, NextResponse } from 'next/server';
+import { Pool } from 'pg';
 
-// Sample customer data - would come from a database in a real implementation
-const customers: Customer[] = [
-  {
-    id: '1',
-    name: 'John Smith',
-    email: 'john.smith@example.com',
-    phone: '(555) 123-4567',
-    address: '123 Main St, Anytown, USA',
-    totalOrders: 12,
-    totalSpent: 782.45,
-    lastOrder: '2023-09-10T11:45:00Z',
-  },
-  {
-    id: '2',
-    name: 'Sarah Johnson',
-    email: 'sarah.j@example.com',
-    phone: '(555) 234-5678',
-    address: '456 Oak Ave, Somewhere, USA',
-    totalOrders: 5,
-    totalSpent: 320.18,
-    lastOrder: '2023-09-05T09:15:00Z',
-  },
-  {
-    id: '3',
-    name: 'Michael Brown',
-    email: 'mbrown@example.com',
-    phone: '(555) 345-6789',
-    address: '789 Pine St, Elsewhere, USA',
-    totalOrders: 8,
-    totalSpent: 455.90,
-    lastOrder: '2023-09-08T16:20:00Z',
-  },
-  {
-    id: '4',
-    name: 'Emily Davis',
-    email: 'emily.davis@example.com',
-    phone: '(555) 456-7890',
-    totalOrders: 3,
-    totalSpent: 142.75,
-    lastOrder: '2023-08-28T14:10:00Z',
-  },
-  {
-    id: '5',
-    name: 'Robert Wilson',
-    email: 'rwilson@example.com',
-    phone: '(555) 567-8901',
-    address: '321 Cedar Rd, Nowhere, USA',
-    totalOrders: 15,
-    totalSpent: 1250.32,
-    lastOrder: '2023-09-12T14:30:00Z',
-  },
-];
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-// GET handler to retrieve a single customer by ID
+// GET /api/customers/[id] - Get specific customer
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
-  const customer = customers.find(customer => customer.id === id);
-  
-  if (!customer) {
-    return NextResponse.json(
-      { error: 'Customer not found' },
-      { status: 404 }
-    );
-  }
-  
-  return NextResponse.json(customer);
-}
-
-// PATCH handler to update a customer
-export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = params.id;
-    const customerIndex = customers.findIndex(customer => customer.id === id);
-    
-    if (customerIndex === -1) {
+    const { id } = params;
+
+    const result = await pool.query(`
+      SELECT 
+        c.*,
+        COUNT(t.id) as transaction_count,
+        COALESCE(SUM(t.total_amount), 0) as total_spent_calculated
+      FROM customers c
+      LEFT JOIN transactions t ON c.id = t.customer_id
+      WHERE c.id = $1
+      GROUP BY c.id
+    `, [id]);
+
+    if (result.rows.length === 0) {
       return NextResponse.json(
-        { error: 'Customer not found' },
+        { success: false, error: 'Customer not found' },
         { status: 404 }
       );
     }
-    
-    const body = await request.json();
-    const updatedCustomer = {
-      ...customers[customerIndex],
-      ...body,
-    };
-    
-    // In a real app, this would update a database record
-    customers[customerIndex] = updatedCustomer;
-    
-    return NextResponse.json(updatedCustomer);
+
+    return NextResponse.json({
+      success: true,
+      data: result.rows[0]
+    });
+
   } catch (error) {
+    console.error('Error fetching customer:', error);
     return NextResponse.json(
-      { error: 'Failed to update customer' },
+      { success: false, error: 'Failed to fetch customer' },
       { status: 500 }
     );
   }
 }
 
-// DELETE handler to remove a customer
-export async function DELETE(
-  request: Request,
+// PUT /api/customers/[id] - Update customer
+export async function PUT(
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const id = params.id;
-  const customerIndex = customers.findIndex(customer => customer.id === id);
-  
-  if (customerIndex === -1) {
+  try {
+    const { id } = params;
+    const { name, email, phone, address, loyalty_points } = await request.json();
+
+    if (!name) {
+      return NextResponse.json(
+        { success: false, error: 'Customer name is required' },
+        { status: 400 }
+      );
+    }
+
+    // Check if customer exists
+    const existingCustomer = await pool.query(
+      'SELECT id FROM customers WHERE id = $1',
+      [id]
+    );
+
+    if (existingCustomer.rows.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Customer not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if email or phone conflicts with other customers
+    if (email || phone) {
+      let checkQuery = 'SELECT id FROM customers WHERE id != $1 AND (';
+      const checkParams: any[] = [id];
+      const conditions: string[] = [];
+
+      if (email) {
+        checkParams.push(email);
+        conditions.push(`email = $${checkParams.length}`);
+      }
+
+      if (phone) {
+        checkParams.push(phone);
+        conditions.push(`phone = $${checkParams.length}`);
+      }
+
+      checkQuery += conditions.join(' OR ') + ')';
+
+      const conflictingCustomer = await pool.query(checkQuery, checkParams);
+      
+      if (conflictingCustomer.rows.length > 0) {
+        return NextResponse.json(
+          { success: false, error: 'Another customer with this email or phone already exists' },
+          { status: 409 }
+        );
+      }
+    }
+
+    const result = await pool.query(`
+      UPDATE customers 
+      SET 
+        name = $1,
+        email = $2,
+        phone = $3,
+        address = $4,
+        loyalty_points = COALESCE($5, loyalty_points),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $6
+      RETURNING *
+    `, [name, email, phone, address, loyalty_points, id]);
+
+    return NextResponse.json({
+      success: true,
+      data: result.rows[0]
+    });
+
+  } catch (error) {
+    console.error('Error updating customer:', error);
     return NextResponse.json(
-      { error: 'Customer not found' },
-      { status: 404 }
+      { success: false, error: 'Failed to update customer' },
+      { status: 500 }
     );
   }
-  
-  // In a real app, this would delete from a database
-  const deletedCustomer = customers.splice(customerIndex, 1)[0];
-  
-  return NextResponse.json(deletedCustomer);
+}
+
+// DELETE /api/customers/[id] - Delete customer
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+
+    // Check if customer exists
+    const existingCustomer = await pool.query(
+      'SELECT id FROM customers WHERE id = $1',
+      [id]
+    );
+
+    if (existingCustomer.rows.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Customer not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if customer has any transactions
+    const transactionCheck = await pool.query(
+      'SELECT COUNT(*) as count FROM transactions WHERE customer_id = $1',
+      [id]
+    );
+
+    const transactionCount = parseInt(transactionCheck.rows[0].count);
+
+    if (transactionCount > 0) {
+      // Soft delete - mark as inactive instead of hard delete
+      await pool.query(`
+        UPDATE customers 
+        SET 
+          active = false,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $1
+      `, [id]);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Customer deactivated (has transaction history)'
+      });
+    } else {
+      // Hard delete if no transactions
+      await pool.query('DELETE FROM customers WHERE id = $1', [id]);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Customer deleted successfully'
+      });
+    }
+
+  } catch (error) {
+    console.error('Error deleting customer:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete customer' },
+      { status: 500 }
+    );
+  }
 } 

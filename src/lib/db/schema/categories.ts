@@ -1,37 +1,30 @@
 import { pgTable, uuid, varchar, boolean, timestamp, text } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { z } from 'zod';
 
 export const categories = pgTable('categories', {
   id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 100 }).notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
   parentId: uuid('parent_id').references((): any => categories.id),
   imageUrl: varchar('image_url', { length: 255 }),
   active: boolean('active').default(true),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-// Define Zod schemas for validation
-export const insertCategorySchema = createInsertSchema(categories, {
-  name: z.string().min(1).max(100),
-  description: z.string().optional(),
-  parentId: z.string().uuid().optional(),
-  imageUrl: z.string().url().optional(),
-  active: z.boolean().default(true),
-});
+// Define types
+export type Category = {
+  id: string;
+  name: string;
+  description?: string;
+  parentId?: string;
+  imageUrl?: string;
+  active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-export const updateCategorySchema = createSelectSchema(categories, {
-  id: z.string().uuid(),
-}).merge(insertCategorySchema.partial());
-
-export const selectCategorySchema = createSelectSchema(categories);
-
-// Custom types
-export type Category = z.infer<typeof selectCategorySchema>;
-export type NewCategory = z.infer<typeof insertCategorySchema>;
-export type UpdateCategory = z.infer<typeof updateCategorySchema>;
+export type NewCategory = Omit<Category, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateCategory = Partial<NewCategory> & { id: string };
 
 // Helper functions
 export const isRootCategory = (category: Category) => {

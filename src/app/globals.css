@@ -2,76 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+/**
+ * ===========================================
+ * THEME COLORS AND VARIABLES
+ * ===========================================
+ * 
+ * These are the color definitions for our POS system.
+ * We have both light and dark theme support.
+ */
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 262 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 262 83.3% 57.8%;
+    --accent-foreground: 220.9 39.3% 11%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262 83.3% 57.8%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 263 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 263 83.3% 57.8%;
+    --accent-foreground: 210 20% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 263 83.3% 57.8%;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
@@ -80,7 +67,104 @@ body {
   }
 }
 
-/* Custom Animations */
+/**
+ * ===========================================
+ * REUSABLE COMPONENT STYLES
+ * ===========================================
+ * 
+ * These are common styles used throughout the app.
+ * They help maintain consistency across all pages.
+ */
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-white rounded-lg shadow-lg p-6;
+}
+
+.card-dark {
+  @apply bg-zinc-900 rounded-lg shadow-lg p-6;
+}
+
+/* Input Styles */
+.input {
+  @apply bg-white border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.input-dark {
+  @apply bg-zinc-900 border border-zinc-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Table Styles */
+.table {
+  @apply w-full text-left border-collapse;
+}
+
+.table th {
+  @apply bg-gray-50 text-gray-600 font-medium py-3 px-4;
+}
+
+.table td {
+  @apply border-t py-3 px-4;
+}
+
+.table-dark {
+  @apply w-full text-left border-collapse;
+}
+
+.table-dark th {
+  @apply bg-zinc-800 text-zinc-400 font-medium py-3 px-4;
+}
+
+.table-dark td {
+  @apply border-t border-zinc-800 py-3 px-4;
+}
+
+/* Navigation Styles */
+.nav-link {
+  @apply text-gray-600 hover:text-gray-900 transition-colors;
+}
+
+.nav-link-active {
+  @apply text-gray-900;
+}
+
+/* Dark Theme Navigation */
+.nav-link-dark {
+  @apply text-zinc-400 hover:text-white transition-colors;
+}
+
+.nav-link-active-dark {
+  @apply text-white;
+}
+
+/* Dark Theme Utilities */
+.bg-dark {
+  background-color: rgb(24, 24, 27);
+}
+
+.text-dark {
+  color: rgb(250, 250, 250);
+}
+
+.border-dark {
+  border-color: rgb(39, 39, 42);
+}
+
+/**
+ * ===========================================
+ * CUSTOM ANIMATIONS
+ * ===========================================
+ * 
+ * These animations make the app feel more interactive and modern.
+ * Each animation has a specific purpose for user feedback.
+ */
+
+/* Bounce horizontally - used for button interactions */
 @keyframes bounceX {
   0%, 100% {
     transform: translateX(0);
@@ -90,6 +174,7 @@ body {
   }
 }
 
+/* Shake animation - used for error states */
 @keyframes shake {
   0%, 100% {
     transform: translateX(0);
@@ -102,6 +187,7 @@ body {
   }
 }
 
+/* Slow pulse - used for loading states */
 @keyframes slowPulse {
   0%, 100% {
     opacity: 0.1;
@@ -113,6 +199,7 @@ body {
   }
 }
 
+/* Alternative slow pulse - for staggered animations */
 @keyframes slowPulse2 {
   0%, 100% {
     opacity: 0.1;
@@ -124,6 +211,7 @@ body {
   }
 }
 
+/* Fade in from bottom - used for page transitions */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -135,15 +223,20 @@ body {
   }
 }
 
+/* Floating animation - used for decorative elements */
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
+  0% {
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
 
+/* Rotate in animation - used for modal appearances */
 @keyframes rotateIn {
   from {
     transform: rotate(-5deg) scale(0.9);
@@ -155,6 +248,7 @@ body {
   }
 }
 
+/* Shimmer effect - used for loading skeletons */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -164,6 +258,7 @@ body {
   }
 }
 
+/* Morphing background - used for decorative blobs */
 @keyframes morphBackground {
   0% {
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
@@ -182,8 +277,17 @@ body {
   }
 }
 
-/* Utility Classes */
+/**
+ * ===========================================
+ * UTILITY CLASSES
+ * ===========================================
+ * 
+ * These classes can be applied to any element to add
+ * animations and special effects.
+ */
+
 @layer utilities {
+  /* Animation Classes */
   .animate-bounce-x {
     animation: bounceX 1s infinite;
   }
@@ -193,11 +297,11 @@ body {
   }
   
   .animate-pulse-slow {
-    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: slowPulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
   .animate-pulse-slow-2 {
-    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: slowPulse2 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     animation-delay: -2s;
   }
   
@@ -206,238 +310,276 @@ body {
   }
   
   .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-rotate-in {
-    animation: rotateIn 0.5s ease-out forwards;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 3s linear infinite;
-    background: linear-gradient(90deg, 
-      rgba(255,255,255,0) 0%, 
-      rgba(255,255,255,0.2) 25%, 
-      rgba(255,255,255,0.2) 75%, 
-      rgba(255,255,255,0) 100%);
-    background-size: 200% 100%;
-  }
-
-  .animate-morph-bg {
-    animation: morphBackground 10s ease-in-out infinite;
+    animation: float 3s ease-in-out infinite;
   }
   
-  /* Glass effect */
+  .animate-rotate-in {
+    animation: rotateIn 0.3s ease-out;
+  }
+  
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  .animate-morph-bg {
+    animation: morphBackground 8s ease-in-out infinite;
+  }
+
+  /* Glass Effect */
   .glass {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
-  
+
   .dark .glass {
-    background: rgba(17, 25, 40, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.125);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .glass-intense {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  }
-  
-  .dark .glass-intense {
-    background: rgba(17, 25, 40, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
-  /* Gradient text */
+  .dark .glass-intense {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Text Gradients */
   .text-gradient {
-    background-image: linear-gradient(to right, #2563eb, #9333ea);
-    background-clip: text;
-    color: transparent;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .text-gradient-gold {
-    background-image: linear-gradient(to right, #f59e0b, #f43f5e);
-    background-clip: text;
-    color: transparent;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .text-gradient-sunset {
-    background-image: linear-gradient(to right, #f97316, #ec4899);
-    background-clip: text;
-    color: transparent;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .text-gradient-ocean {
-    background-image: linear-gradient(to right, #0ea5e9, #10b981);
-    background-clip: text;
-    color: transparent;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  /* Gradient backgrounds */
+  /* Background Gradients */
   .bg-gradient-blue-purple {
-    background-image: linear-gradient(to right, #2563eb, #9333ea);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 
   .bg-gradient-blue {
-    background-image: linear-gradient(to right, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   }
 
   .bg-gradient-purple {
-    background-image: linear-gradient(to right, #8b5cf6, #6d28d9);
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
   }
 
   .bg-gradient-sunset {
-    background-image: linear-gradient(to right, #f97316, #ec4899);
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
   }
 
   .bg-gradient-ocean {
-    background-image: linear-gradient(45deg, #0ea5e9, #10b981);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 
   .bg-gradient-retro {
-    background-image: linear-gradient(45deg, #fbbf24, #f87171, #ec4899);
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
   }
 
-  /* New button styles */
+  /* Special Button Effects */
   .btn-neon {
+    background: linear-gradient(45deg, #ff006e, #8338ec);
+    border: none;
+    color: white;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
   }
 
   .btn-neon::before {
-    content: "";
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
-    background: linear-gradient(45deg, #2563eb, #9333ea, #2563eb);
-    background-size: 200% 200%;
-    z-index: -1;
-    animation: shimmer 3s linear infinite;
-    border-radius: 0.5rem;
-  }
-
-  .dark .btn-neon {
-    box-shadow: 0 0 15px rgba(37, 99, 235, 0.7);
-  }
-
-  .btn-fancy {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    border: none;
-    z-index: 1;
-  }
-
-  .btn-fancy::before {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: all 0.5s;
-    z-index: -1;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
   }
 
-  .btn-fancy:hover::before {
+  .btn-neon:hover::before {
     left: 100%;
   }
 
-  /* 3D button effect */
+  .dark .btn-neon {
+    box-shadow: 0 0 20px rgba(131, 56, 236, 0.5);
+  }
+
+  .btn-fancy {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .btn-fancy::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #764ba2, #667eea);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .btn-fancy:hover::before {
+    opacity: 1;
+  }
+
   .btn-3d {
-    transform-style: preserve-3d;
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     transition: all 0.2s ease;
   }
 
   .btn-3d:active {
-    transform: translateY(4px);
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
-  /* Card effects */
+  /* Card Effects */
   .card-hover {
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .card-hover:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   }
 
   .card-border-gradient {
-    position: relative;
-    border-radius: 10px;
-    padding: 1px;
-    background: linear-gradient(45deg, #2563eb, #9333ea, #f97316, #2563eb);
-    background-size: 300% 300%;
-    animation: shimmer 10s linear infinite;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    padding: 2px;
+    border-radius: 12px;
   }
 
   .card-border-gradient-inner {
-    border-radius: 9px;
     background: white;
-    height: 100%;
+    border-radius: 10px;
+    padding: 1rem;
   }
 
   .dark .card-border-gradient-inner {
-    background: #1f2937;
+    background: rgb(24, 24, 27);
   }
 
-  /* Morphing blob backgrounds */
+  /* Decorative Elements */
   .blob-bg {
-    position: absolute;
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-    animation: morphBackground 10s ease-in-out infinite;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    filter: blur(40px);
+    opacity: 0.7;
   }
 
-  /* Input styles */
+  /* Enhanced Input Styles */
   .input-animated {
     transition: all 0.3s ease;
     border: 2px solid transparent;
-    background-image: linear-gradient(white, white), linear-gradient(90deg, #2563eb, #9333ea);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(45deg, #667eea, #764ba2) border-box;
   }
 
   .dark .input-animated {
-    background-image: linear-gradient(#1f2937, #1f2937), linear-gradient(90deg, #2563eb, #9333ea);
+    background: linear-gradient(rgb(24, 24, 27), rgb(24, 24, 27)) padding-box,
+                linear-gradient(45deg, #667eea, #764ba2) border-box;
   }
 
   .input-animated:focus {
-    box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.2);
-    background-image: linear-gradient(white, white), linear-gradient(90deg, #9333ea, #2563eb);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   }
 
   .dark .input-animated:focus {
-    box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.3);
-    background-image: linear-gradient(#1f2937, #1f2937), linear-gradient(90deg, #9333ea, #2563eb);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
   }
 
+  /* 3D Perspective */
   .perspective {
-    perspective: 2000px;
+    perspective: 1000px;
   }
 
   .rotate-y-12 {
     transform: rotateY(12deg);
   }
 
+  /* Glass Card */
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
+
+  /* Hover Lift Effect */
+  .hover-lift {
+    transition: transform 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+  }
+
+  /* Loading Dots Animation */
+  .loading-dots:after {
+    content: '...';
+    animation: dots 1.5s steps(4, end) infinite;
+  }
+
+  @keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60% { content: '...'; }
+    80%, 100% { content: ''; }
+  }
+}
+
+/**
+ * ===========================================
+ * SCROLLBAR STYLING
+ * ===========================================
+ * 
+ * Custom scrollbar design for a more polished look.
+ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

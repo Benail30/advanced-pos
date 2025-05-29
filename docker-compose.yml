@@ -1,30 +1,37 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+  postgres:
+    container_name: pos_postgres
+    image: postgres:latest
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/pos_db
-      - NEXT_PUBLIC_AUTH0_DOMAIN=${NEXT_PUBLIC_AUTH0_DOMAIN}
-      - NEXT_PUBLIC_AUTH0_CLIENT_ID=${NEXT_PUBLIC_AUTH0_CLIENT_ID}
-      - NEXT_PUBLIC_AUTH0_CALLBACK_URL=${NEXT_PUBLIC_AUTH0_CALLBACK_URL}
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15
+      POSTGRES_DB: pos_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_LISTEN_ADDRESSES: '*'
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=pos_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    command: postgres -c listen_addresses='*'
+
+  pgadmin:
+    container_name: pos_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: unless-stopped
 
 volumes:
-  postgres_data: 
+  postgres_data:
+  pgadmin_data: 
