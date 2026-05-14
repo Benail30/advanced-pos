@@ -1,0 +1,26 @@
+front :
+ CSR : webpage rendering happen in client side ( browser ) : bad for seo 
+ SSR : webpage rend happen in server side (server) : good for seo 
+
+ CSR : light on server , 
+ SSR : heavy 
+
+
+
+<!-- backend : 
+runs always on the server 
+connected to database 
+listens to api calls  -->
+
+
+BFF : ( backend for frontend)
+
+ORM : OBJECT RELATION MAPPING 
+docker compose up 
+docker compose up -d 
+docker compose down 
+docker compose stop 
+docker compose restart
+docker container ps 
+docker volume ls 
+

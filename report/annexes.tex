@@ -1,0 +1,75 @@
+\appendix
+\chapter{Project Configuration}
+
+\section{Project Folder Structure}
+
+The POS system follows a standard Next.js project structure:
+
+\begin{verbatim}
+advanced-pos/
+|-- src/
+|   |-- app/                    # Next.js App Router pages
+|   |   |-- api/               # API endpoints
+|   |   |-- auth/              # Authentication pages
+|   |   |-- inventory/         # Inventory management
+|   |   |-- pos/               # POS interface
+|   |   `-- dashboard/         # Admin dashboard
+|   |-- components/            # React components
+|   |   |-- ui/               # Reusable UI components
+|   |   |-- pos/              # POS-specific components
+|   |   `-- admin/            # Admin-specific components
+|   |-- lib/                   # Utilities and configurations
+|   |   |-- db/               # Database configurations
+|   |   `-- auth/             # Authentication helpers
+|   |-- hooks/                 # Custom React hooks
+|   |-- types/                 # TypeScript type definitions
+|   `-- scripts/               # Utility scripts
+|-- public/                    # Static assets
+|-- drizzle/                   # Database migrations
+|-- docs/                      # Documentation
+`-- working app screenshots/   # Application screenshots
+\end{verbatim}
+
+\section{Environment Configuration}
+
+The application requires the following environment variables in the \texttt{.env} file:
+
+\subsection{Auth0 Configuration}
+\begin{verbatim}
+# Auth0 Configuration for Admin Authentication
+AUTH0_SECRET='use-a-long-random-string-here'
+AUTH0_BASE_URL='http://localhost:3000'
+AUTH0_ISSUER_BASE_URL='your-auth0-domain'
+AUTH0_CLIENT_ID='your-client-id'
+AUTH0_CLIENT_SECRET='your-client-secret'
+\end{verbatim}
+
+\subsection{Database Configuration}
+\begin{verbatim}
+# PostgreSQL Database
+DATABASE_URL='postgresql://username:password@localhost:5432/pos_db'
+\end{verbatim}
+
+\subsection{Authentication Configuration}
+\begin{verbatim}
+# JWT Secret for Cashier Authentication
+JWT_SECRET='your-jwt-secret-key'
+\end{verbatim}
+
+\section{Installation and Setup}
+
+\subsection{Prerequisites}
+\begin{itemize}
+  \item Node.js 18+ and npm
+  \item PostgreSQL database
+  \item Auth0 account for admin authentication
+\end{itemize}
+
+\subsection{Setup Steps}
+\begin{enumerate}
+  \item Clone the repository
+  \item Install dependencies: \texttt{npm install}
+  \item Configure environment variables in \texttt{.env}
+  \item Run database migrations: \texttt{npm run db:migrate}
+  \item Start development server: \texttt{npm run dev}
+\end{enumerate}

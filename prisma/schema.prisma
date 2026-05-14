@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  CASHIER
+}
+
+enum OrderStatus {
+  COMPLETED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  NFC
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownedStores Store[] @relation("AdminStores")
+
+  storeId String?
+  store   Store?  @relation("StoreCashiers", fields: [storeId], references: [id])
+
+  orders Order[]
+}
+
+model Store {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  adminId String
+  admin   User   @relation("AdminStores", fields: [adminId], references: [id])
+
+  cashiers   User[]     @relation("StoreCashiers")
+  products   Product[]
+  orders     Order[]
+  categories Category[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  storeId  String
+  store    Store     @relation(fields: [storeId], references: [id])
+  products Product[]
+
+  @@unique([name, storeId])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  imageUrl    String?
+  buyPrice    Decimal  @db.Decimal(10, 2)
+  sellPrice   Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  sku         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  storeId  String
+  store    Store    @relation(fields: [storeId], references: [id])
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  orderItems OrderItem[]
+
+  @@unique([sku, storeId])
+}
+
+model Order {
+  id        String      @id
+  status    OrderStatus   @default(COMPLETED)
+  customerName  String?
+  paymentMethod PaymentMethod @default(CASH)
+  total     Decimal     @db.Decimal(10, 2)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  storeId   String
+  store     Store  @relation(fields: [storeId], references: [id])
+
+  cashierId String
+  cashier   User   @relation(fields: [cashierId], references: [id])
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  unitCost  Decimal @default(0) @db.Decimal(10, 2)
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}

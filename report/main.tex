@@ -1,0 +1,61 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{setspace}
+\usepackage{titlesec}
+\geometry{a4paper, margin=2.5cm}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\onehalfspacing
+
+\begin{document}
+
+% Title page and acknowledgments
+\input{titlepage}
+\input{acknowledgements}
+
+% Table of Contents and List of Figures
+\tableofcontents
+\newpage
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\newpage
+
+% General Introduction
+\input{general-introduction}
+\newpage
+
+% Chapters
+\input{chapter1}  % General Project Framework
+\input{chapter2}  % Requirements and Technical Study (Sprint 0)
+\input{chapter3}  % Sprint 1 – Authentication and Role Management
+\input{chapter4}  % Sprint 2 – User and Product Management (Admin)
+\input{chapter5}  % Sprint 3 – POS Interface & Invoicing
+\input{chapter6}  % Sprint 4 – Business Intelligence and Finalization
+
+% Conclusion
+\input{conclusion}  % General Conclusion and Perspectives
+
+% Glossary
+\input{glossary}
+
+% Bibliography
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+
+% Annexes
+\appendix
+\input{annexes}
+
+\end{document}
