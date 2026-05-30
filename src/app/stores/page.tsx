@@ -321,6 +321,7 @@ export default function StoresPage() {
             categories, orders, and cashier assignments. This action cannot be
             undone.
           </p>
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
               Cancel
