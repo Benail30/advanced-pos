@@ -8,27 +8,13 @@ import { cn } from '@/lib/utils';
 import {
   Menu,
   X,
-  Users,
-  Package,
-  ShoppingCart,
-  BarChart3,
   Settings,
   Store,
-  ShieldCheck,
   Wallet,
   LogOut,
-  ClipboardList,
+  ShoppingCart,
   History,
 } from 'lucide-react';
-
-const ADMIN_NAVIGATION = [
-  { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-  { name: 'Inventory', href: '/inventory', icon: Package },
-  { name: 'Orders', href: '/orders', icon: ClipboardList },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Stores', href: '/stores', icon: Store },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
 
 const CASHIER_NAVIGATION = [
   { name: 'POS', href: '/pos', icon: ShoppingCart },
@@ -46,11 +32,11 @@ export default function Navbar() {
       <nav className="bg-white shadow-lg border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <Store className="h-8 w-8 text-purple-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">Advanced POS</span>
+              <span className="text-xl font-bold text-gray-900">Advanced POS</span>
             </div>
-            <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
+            <div className="animate-pulse bg-gray-200 h-8 w-20 rounded" />
           </div>
         </div>
       </nav>
@@ -59,34 +45,23 @@ export default function Navbar() {
 
   if (!session) return null;
 
-  const role = session.user.role;
-  const isAdmin = role === 'ADMIN' || role === 'SUPER_ADMIN';
-  const navigation = isAdmin ? ADMIN_NAVIGATION : CASHIER_NAVIGATION;
-  const BrandIcon = isAdmin ? ShieldCheck : Wallet;
-  const roleLabel = isAdmin ? 'Admin' : 'Cashier';
-
   return (
     <nav className="bg-white shadow-lg border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
+          {/* Logo — links back to /pos */}
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+            <Link href="/pos" className="flex-shrink-0 flex items-center gap-2 mr-6">
               <Store className="h-8 w-8 text-purple-600" />
-              <BrandIcon className="ml-2 h-5 w-5 text-purple-500" />
-              <span className="ml-2 text-xl font-bold text-gray-900">Advanced POS</span>
-              <span
-                className={cn(
-                  'ml-2 text-xs px-2 py-1 rounded border',
-                  isAdmin
-                    ? 'bg-blue-100 text-blue-800 border-blue-200'
-                    : 'bg-green-100 text-green-800 border-green-200'
-                )}
-              >
-                {roleLabel}
+              <Wallet className="h-5 w-5 text-purple-500" />
+              <span className="text-xl font-bold text-gray-900">Advanced POS</span>
+              <span className="text-xs px-2 py-1 rounded border bg-green-100 text-green-800 border-green-200">
+                Cashier
               </span>
-            </div>
-            <div className="hidden md:ml-6 md:flex md:space-x-8">
-              {navigation.map((item) => {
+            </Link>
+
+            <div className="hidden md:flex md:space-x-8">
+              {CASHIER_NAVIGATION.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
@@ -123,11 +98,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
             >
-              {mobileMenuOpen ? (
-                <X className="block h-6 w-6" />
-              ) : (
-                <Menu className="block h-6 w-6" />
-              )}
+              {mobileMenuOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
             </button>
           </div>
         </div>
@@ -136,7 +107,7 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden">
           <div className="pt-2 pb-3 space-y-1">
-            {navigation.map((item) => {
+            {CASHIER_NAVIGATION.map((item) => {
               const Icon = item.icon;
               return (
                 <Link

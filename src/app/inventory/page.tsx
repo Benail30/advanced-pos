@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import { CURRENCY } from '@/lib/utils';
 
 type Category = {
   id: string;
@@ -305,8 +306,8 @@ export default function InventoryPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{prod.category?.name ?? <span className="text-gray-400 italic">—</span>}</td>
                     <td className="px-4 py-3 text-gray-500 font-mono text-xs">{prod.sku ?? '—'}</td>
-                    <td className="px-4 py-3 text-gray-600">${prod.buyPrice.toFixed(2)}</td>
-                    <td className="px-4 py-3 text-gray-600">${prod.sellPrice.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-gray-600">{CURRENCY} {prod.buyPrice.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-gray-600">{CURRENCY} {prod.sellPrice.toFixed(2)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <span className="text-gray-900 font-medium">{prod.stock}</span>

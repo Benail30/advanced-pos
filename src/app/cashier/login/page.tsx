@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -10,8 +11,16 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 
-export default function CashierLoginPage() {
+function safeRedirect(url: string | null, fallback: string): string {
+  if (url && url.startsWith('/') && !url.startsWith('//')) return url;
+  return fallback;
+}
+
+function CashierLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = safeRedirect(searchParams.get('callbackUrl'), '/pos');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,28 +31,27 @@ export default function CashierLoginPage() {
     setError('');
     setLoading(true);
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
-
+    const result = await signIn('credentials', { email, password, redirect: false });
     setLoading(false);
 
     if (result?.error) {
       setError('Invalid credentials');
-    } else {
-      router.push('/pos');
+      return;
     }
+
+    router.push(callbackUrl);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-4">
-        <Link href="/" className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 text-sm transition-colors w-fit">
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </Link>
+    <div className="w-full max-w-sm space-y-4">
+      <Link
+        href="/"
+        className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 text-sm transition-colors w-fit"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to home
+      </Link>
+
       <Card>
         <CardHeader className="space-y-1 pb-4">
           <CardTitle className="text-xl font-semibold text-center text-gray-900">
@@ -78,17 +86,31 @@ export default function CashierLoginPage() {
               />
             </div>
 
-            {error && (
-              <p className="text-sm text-red-500 text-center">{error}</p>
-            )}
+            {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
+
+          <p className="mt-2 text-center text-sm text-gray-500">
+            Admin?{' '}
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Use admin login
+            </Link>
+          </p>
         </CardContent>
       </Card>
-      </div>
+    </div>
+  );
+}
+
+export default function CashierLoginPage() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <Suspense fallback={<div className="w-full max-w-sm h-64 bg-white rounded-lg animate-pulse" />}>
+        <CashierLoginForm />
+      </Suspense>
     </div>
   );
 }

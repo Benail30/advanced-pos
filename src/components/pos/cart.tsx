@@ -2,6 +2,7 @@
 
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CURRENCY } from '@/lib/utils';
 
 interface CartItem {
   id: string;
@@ -34,7 +35,7 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem, onCheckout
           <div key={item.id} className="flex items-center justify-between py-2 border-b">
             <div className="flex-1">
               <h3 className="font-medium">{item.name}</h3>
-              <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
+              <p className="text-sm text-gray-500">{CURRENCY} {item.price.toFixed(2)}</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -64,15 +65,15 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem, onCheckout
       <div className="border-t pt-4 space-y-2">
         <div className="flex justify-between text-sm">
           <span>Subtotal</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>{CURRENCY} {subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span>Tax ({taxRate}%)</span>
-          <span>${tax.toFixed(2)}</span>
+          <span>{CURRENCY} {tax.toFixed(2)}</span>
         </div>
         <div className="flex justify-between font-bold text-lg pt-2 border-t">
           <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+          <span>{CURRENCY} {total.toFixed(2)}</span>
         </div>
       </div>
 

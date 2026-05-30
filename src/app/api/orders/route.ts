@@ -76,7 +76,11 @@ export async function GET(req: Request) {
     data: orders.map(o => ({
       ...o,
       total: Number(o.total),
-      items: o.items.map(i => ({ ...i, unitPrice: Number(i.unitPrice) })),
+      items: o.items.map(i => ({
+        ...i,
+        unitPrice: Number(i.unitPrice),
+        unitCost:  Number(i.unitCost),
+      })),
     })),
   });
 }
@@ -181,7 +185,11 @@ export async function POST(req: Request) {
     data: {
       ...order,
       total: Number(order.total),
-      items: order.items.map(i => ({ ...i, unitPrice: Number(i.unitPrice) })),
+      items: order.items.map(i => ({
+        ...i,
+        unitPrice: Number(i.unitPrice),
+        unitCost:  Number(i.unitCost),
+      })),
     },
   }, { status: 201 });
 }

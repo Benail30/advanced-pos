@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,14 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-sm space-y-4">
+      <Link
+        href="/"
+        className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 text-sm transition-colors w-fit"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to home
+      </Link>
       <Card className="w-full max-w-sm">
         <CardHeader className="space-y-1 pb-4">
           <CardTitle className="text-xl font-semibold text-center text-gray-900">
@@ -115,6 +124,7 @@ export default function RegisterPage() {
           </p>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Receipt, Search, Filter, Download, Printer, Eye } from 'lucide-react';
+import { CURRENCY } from '@/lib/utils';
 
 interface Transaction {
   id: string;
@@ -62,19 +63,19 @@ export function TransactionHistory({
         <div className="bg-white rounded-lg shadow-sm p-4">
           <p className="text-sm text-gray-500">Total Sales</p>
           <p className="text-2xl font-bold text-green-500">
-            ${totalSales.toFixed(2)}
+            {CURRENCY} {totalSales.toFixed(2)}
           </p>
         </div>
         <div className="bg-white rounded-lg shadow-sm p-4">
           <p className="text-sm text-gray-500">Total Refunds</p>
           <p className="text-2xl font-bold text-red-500">
-            ${totalRefunds.toFixed(2)}
+            {CURRENCY} {totalRefunds.toFixed(2)}
           </p>
         </div>
         <div className="bg-white rounded-lg shadow-sm p-4">
           <p className="text-sm text-gray-500">Average Transaction</p>
           <p className="text-2xl font-bold">
-            ${(totalSales / filteredTransactions.length || 0).toFixed(2)}
+            {CURRENCY} {(totalSales / filteredTransactions.length || 0).toFixed(2)}
           </p>
         </div>
       </div>
@@ -198,7 +199,7 @@ export function TransactionHistory({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      ${transaction.total.toFixed(2)}
+                      {CURRENCY} {transaction.total.toFixed(2)}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

@@ -4,7 +4,6 @@ import { getToken } from 'next-auth/jwt';
 
 const ADMIN_ROUTES = [
   '/dashboard',
-  '/analytics',
   '/inventory',
   '/orders',
   '/users',
@@ -47,7 +46,9 @@ export async function middleware(request: NextRequest) {
   // ── Admin-only routes ──
   if (isAdminRoute(pathname)) {
     if (!token || role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/login', request.url));
+      const url = new URL('/login', request.url);
+      url.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(url);
     }
     return NextResponse.next();
   }
@@ -55,7 +56,9 @@ export async function middleware(request: NextRequest) {
   // ── Cashier-only route ──
   if (pathname === '/pos' || pathname.startsWith('/pos/')) {
     if (!token || role !== 'CASHIER') {
-      return NextResponse.redirect(new URL('/cashier/login', request.url));
+      const url = new URL('/cashier/login', request.url);
+      url.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(url);
     }
     return NextResponse.next();
   }
@@ -85,7 +88,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/analytics/:path*',
     '/inventory/:path*',
     '/orders/:path*',
     '/users/:path*',

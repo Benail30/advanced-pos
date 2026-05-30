@@ -1,8 +1,21 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Store, Package, Users, Tag, ShoppingCart, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { metabaseEmbedUrl, metabaseSiteUrl } from "@/lib/metabase";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Store,
+  Package,
+  Users,
+  Tag,
+  ShoppingCart,
+  DollarSign,
+  TrendingUp,
+  AlertTriangle,
+  BarChart3,
+  ExternalLink,
+} from "lucide-react";
+import { CURRENCY } from "@/lib/utils";
 
 const LOW_STOCK_THRESHOLD = 10;
 
@@ -29,45 +42,40 @@ export default async function DashboardPage() {
     );
   }
 
-  // Fetch only COMPLETED order items — REFUNDED orders are excluded entirely.
-  // unitPrice = sell price recorded at time of sale
-  // unitCost  = buy price recorded at time of sale (0 for orders created before this field was added)
-  //
-  // revenue = Σ unitPrice × qty
-  // profit  = Σ (unitPrice − unitCost) × qty
-  //
-  // Note: items from orders created before the unitCost field existed will have
-  // unitCost = 0, so those items contribute their full sell value to profit.
+  // Revenue = Σ unitPrice × qty  (COMPLETED orders only)
+  // Profit  = Σ (unitPrice − unitCost) × qty
   const [orderItems, orderCount, lowStockCount] = await Promise.all([
     prisma.orderItem.findMany({
-      where: { order: { storeId: store.id, status: 'COMPLETED' } },
+      where: { order: { storeId: store.id, status: "COMPLETED" } },
       select: { quantity: true, unitPrice: true, unitCost: true },
     }),
     prisma.order.count({
-      where: { storeId: store.id, status: 'COMPLETED' },
+      where: { storeId: store.id, status: "COMPLETED" },
     }),
     prisma.product.count({
       where: { storeId: store.id, stock: { gt: 0, lt: LOW_STOCK_THRESHOLD } },
     }),
   ]);
 
-  // revenue = sell × qty
   const totalRevenue = orderItems.reduce(
     (sum, i) => sum + Number(i.unitPrice) * i.quantity,
     0,
   );
-
-  // profit = (sell − cost) × qty
   const totalProfit = orderItems.reduce(
     (sum, i) => sum + (Number(i.unitPrice) - Number(i.unitCost)) * i.quantity,
     0,
   );
 
+  // Signed embed URL — storeId locked in JWT; embed can only show this store's data
+  const embedUrl = metabaseEmbedUrl(store.id);
+  const siteUrl = metabaseSiteUrl();
+
   return (
     <div className="space-y-6">
+      {/* Identity */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {session!.user.name ?? 'Admin'}
+          Welcome back, {session!.user.name ?? "Admin"}
         </h1>
         <p className="text-sm text-gray-500 mt-1">{session!.user.email}</p>
       </div>
@@ -78,7 +86,9 @@ export default async function DashboardPage() {
           <Store className="h-5 w-5 text-purple-600" />
         </div>
         <div>
-          <p className="text-xs text-purple-500 font-medium uppercase tracking-wide">Your Store</p>
+          <p className="text-xs text-purple-500 font-medium uppercase tracking-wide">
+            Your Store
+          </p>
           <p className="text-lg font-semibold text-gray-900">{store.name}</p>
         </div>
         <p className="ml-auto text-xs text-gray-400">
@@ -86,19 +96,19 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {/* Primary operational metrics */}
+      {/* KPI cards — primary */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Revenue"
-          value={`$${totalRevenue.toFixed(2)}`}
-          sub="COMPLETED orders"
+          value={`${CURRENCY} ${totalRevenue.toFixed(2)}`}
+          sub="All completed orders"
           icon={<DollarSign className="h-5 w-5 text-green-600" />}
           color="green"
         />
         <MetricCard
           title="Gross Profit"
-          value={`$${totalProfit.toFixed(2)}`}
-          sub="(sell − cost) × qty"
+          value={`${CURRENCY} ${totalProfit.toFixed(2)}`}
+          sub="Revenue minus cost of goods"
           icon={<TrendingUp className="h-5 w-5 text-blue-600" />}
           color="blue"
         />
@@ -119,7 +129,7 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Store stats */}
+      {/* KPI cards — store stats */}
       <div className="grid grid-cols-3 gap-4">
         <MetricCard
           title="Products"
@@ -141,47 +151,112 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Alert strip */}
+      {/* Low stock alert */}
       {lowStockCount > 0 && (
         <div className="flex items-center gap-3 p-4 bg-orange-50 border border-orange-200 rounded-xl text-sm">
           <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0" />
           <span className="text-orange-800 font-medium">
-            {lowStockCount} product{lowStockCount !== 1 ? 's are' : ' is'} running low on stock.
+            {lowStockCount} product{lowStockCount !== 1 ? "s are" : " is"}{" "}
+            running low on stock.
           </span>
-          <a href="/inventory" className="ml-auto text-orange-600 underline hover:text-orange-700 text-xs">
+          <a
+            href="/inventory"
+            className="ml-auto text-orange-600 underline hover:text-orange-700 text-xs"
+          >
             View inventory →
           </a>
         </div>
       )}
+
+      {/* ── Metabase embedded analytics ─────────────────────────────────── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-blue-600" />
+            <h2 className="text-lg font-semibold text-gray-900">Analytics</h2>
+          </div>
+          {siteUrl && (
+            <a
+              href={siteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Open Metabase
+            </a>
+          )}
+        </div>
+
+        {embedUrl ? (
+          <div className="rounded-xl overflow-hidden border border-gray-200 bg-white">
+            <iframe
+              src={embedUrl}
+              width="100%"
+              height="800"
+              title="Metabase Analytics"
+              style={{ border: "none", display: "block" }}
+            />
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-10 text-center">
+            <BarChart3 className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+            <p className="text-sm font-medium text-gray-600">
+              Analytics not configured
+            </p>
+            <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
+              Set{" "}
+              <code className="bg-gray-100 px-1 rounded">
+                METABASE_SECRET_KEY
+              </code>{" "}
+              and{" "}
+              <code className="bg-gray-100 px-1 rounded">
+                METABASE_DASHBOARD_ID
+              </code>{" "}
+              in <code className="bg-gray-100 px-1 rounded">.env.local</code>,
+              then restart the dev server.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 function MetricCard({
-  title, value, sub, icon, color, alert,
+  title,
+  value,
+  sub,
+  icon,
+  color,
+  alert,
 }: {
   title: string;
   value: string;
   sub?: string;
   icon: React.ReactNode;
-  color: 'blue' | 'green' | 'orange' | 'purple';
+  color: "blue" | "green" | "orange" | "purple";
   alert?: boolean;
 }) {
   const bg = {
-    blue: 'bg-blue-50',
-    green: 'bg-green-50',
-    orange: 'bg-orange-50',
-    purple: 'bg-purple-50',
+    blue: "bg-blue-50",
+    green: "bg-green-50",
+    orange: "bg-orange-50",
+    purple: "bg-purple-50",
   }[color];
 
   return (
-    <Card className={alert ? 'border-orange-300' : ''}>
+    <Card className={alert ? "border-orange-300" : ""}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-gray-600">
+          {title}
+        </CardTitle>
         <div className={`p-1.5 rounded-lg ${bg}`}>{icon}</div>
       </CardHeader>
       <CardContent>
-        <div className={`text-3xl font-bold ${alert ? 'text-orange-500' : 'text-gray-900'}`}>
+        <div
+          className={`text-3xl font-bold ${alert ? "text-orange-500" : "text-gray-900"}`}
+        >
           {value}
         </div>
         {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}

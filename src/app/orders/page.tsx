@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
+import { CURRENCY } from '@/lib/utils';
 
 type OrderItem = { id: string; quantity: number; unitPrice: number; product: { name: string } };
 type Order = {
@@ -128,7 +129,7 @@ export default function OrdersPage() {
                     <td className="px-4 py-3 text-gray-700">{order.cashier.name ?? order.cashier.email}</td>
                     <td className="px-4 py-3 text-gray-600">{order.customerName ?? <span className="italic text-gray-400">Walk-in</span>}</td>
                     <td className="px-4 py-3 text-gray-600">{PAYMENT_LABELS[order.paymentMethod] ?? order.paymentMethod}</td>
-                    <td className="px-4 py-3 font-semibold text-gray-900">${order.total.toFixed(2)}</td>
+                    <td className="px-4 py-3 font-semibold text-gray-900">{CURRENCY} {order.total.toFixed(2)}</td>
                     <td className="px-4 py-3">
                       <Badge className={order.status === 'COMPLETED'
                         ? 'bg-green-100 text-green-700 hover:bg-green-100'
@@ -164,12 +165,12 @@ export default function OrdersPage() {
                                 {item.product.name}
                                 <span className="text-gray-400 ml-2">× {item.quantity}</span>
                               </span>
-                              <span className="font-medium">${(item.unitPrice * item.quantity).toFixed(2)}</span>
+                              <span className="font-medium">{CURRENCY} {(item.unitPrice * item.quantity).toFixed(2)}</span>
                             </div>
                           ))}
                           <div className="flex justify-between font-bold text-gray-900 border-t pt-1.5 mt-1">
                             <span>Total</span>
-                            <span>${order.total.toFixed(2)}</span>
+                            <span>{CURRENCY} {order.total.toFixed(2)}</span>
                           </div>
                         </div>
                       </td>

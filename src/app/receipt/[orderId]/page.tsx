@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { Store, Calendar, User, CreditCard } from 'lucide-react';
 import { DownloadButton } from './download-button';
+import { CURRENCY } from '@/lib/utils';
 
 export default async function ReceiptPage({ params }: { params: { orderId: string } }) {
   const order = await prisma.order.findUnique({
@@ -81,7 +82,7 @@ export default async function ReceiptPage({ params }: { params: { orderId: strin
                 {item.product.name}
                 <span className="text-gray-400 ml-1">× {item.quantity}</span>
               </span>
-              <span className="font-medium text-gray-900">${(item.unitPrice * item.quantity).toFixed(2)}</span>
+              <span className="font-medium text-gray-900">{CURRENCY} {(item.unitPrice * item.quantity).toFixed(2)}</span>
             </div>
           ))}
         </div>
@@ -89,7 +90,7 @@ export default async function ReceiptPage({ params }: { params: { orderId: strin
         {/* Total */}
         <div className="border-t pt-4 flex justify-between text-lg font-bold">
           <span>Total</span>
-          <span className="text-green-600">${total.toFixed(2)}</span>
+          <span className="text-green-600">{CURRENCY} {total.toFixed(2)}</span>
         </div>
 
         <p className="text-center text-xs text-gray-400">Thank you for your purchase!</p>

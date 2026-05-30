@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { 
-  TrendingUp, 
-  Users, 
-  Package, 
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import {
+  TrendingUp,
+  Users,
+  Package,
   DollarSign,
   ShoppingCart,
   AlertTriangle,
   Calendar,
   BarChart3,
   RefreshCw,
-  Activity
-} from 'lucide-react';
+  Activity,
+} from "lucide-react";
 // import PowerBIEmbed from './PowerBIEmbed';
-import { Suspense } from 'react';
+import { Suspense } from "react";
 
 interface DashboardStats {
   totalRevenue: number;
@@ -41,10 +41,10 @@ interface LowStockProduct {
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
-  const isLoading = status === 'loading';
+  const isLoading = status === "loading";
   const user = session?.user;
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<DashboardStats>({
     totalRevenue: 0,
     totalTransactions: 0,
@@ -54,18 +54,20 @@ export default function AdminDashboard() {
     todayTransactions: 0,
   });
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
-  const [lowStockProducts, setLowStockProducts] = useState<LowStockProduct[]>([]);
+  const [lowStockProducts, setLowStockProducts] = useState<LowStockProduct[]>(
+    [],
+  );
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
-    if (user && user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
-      router.push('/pos');
+    if (user && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+      router.push("/pos");
     }
   }, [user, isLoading, router]);
 
@@ -77,7 +79,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!user) return;
-    
+
     const interval = setInterval(() => {
       fetchDashboardData(true); // Silent refresh
     }, 30000); // 30 seconds
@@ -94,34 +96,37 @@ export default function AdminDashboard() {
       }
 
       // Fetch sales summary
-      const salesResponse = await fetch('/api/reports?type=sales_summary', {
-        cache: 'no-store',
+      const salesResponse = await fetch("/api/reports?type=sales_summary", {
+        cache: "no-store",
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          "Cache-Control": "no-cache",
+        },
       });
       const salesData = await salesResponse.json();
-      
+
       // Fetch today's sales
-      const today = new Date().toISOString().split('T')[0];
-      const todayResponse = await fetch(`/api/reports?type=sales_summary&start_date=${today}&end_date=${today}`, {
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
-      });
+      const today = new Date().toISOString().split("T")[0];
+      const todayResponse = await fetch(
+        `/api/reports?type=sales_summary&start_date=${today}&end_date=${today}`,
+        {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        },
+      );
       const todayData = await todayResponse.json();
-      
+
       // Fetch customers count
-      const customersResponse = await fetch('/api/customers?limit=1');
+      const customersResponse = await fetch("/api/customers?limit=1");
       const customersData = await customersResponse.json();
-      
+
       // Fetch top products
-      const topProductsResponse = await fetch('/api/reports?type=top_products');
+      const topProductsResponse = await fetch("/api/reports?type=top_products");
       const topProductsData = await topProductsResponse.json();
-      
+
       // Fetch low stock products
-      const lowStockResponse = await fetch('/api/reports?type=low_stock');
+      const lowStockResponse = await fetch("/api/reports?type=low_stock");
       const lowStockData = await lowStockResponse.json();
 
       setStats({
@@ -132,13 +137,12 @@ export default function AdminDashboard() {
         todayRevenue: parseFloat(todayData.data?.total_revenue || 0),
         todayTransactions: parseInt(todayData.data?.total_transactions || 0),
       });
-      
+
       setTopProducts(topProductsData.data || []);
       setLowStockProducts(lowStockData.data?.slice(0, 5) || []);
       setLastUpdated(new Date());
-      
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setIsDataLoading(false);
       setIsRefreshing(false);
@@ -166,7 +170,10 @@ export default function AdminDashboard() {
       <div className="space-y-6 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white p-6 rounded-lg shadow animate-pulse">
+            <div
+              key={i}
+              className="bg-white p-6 rounded-lg shadow animate-pulse"
+            >
               <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
               <div className="h-8 bg-gray-200 rounded w-1/2"></div>
             </div>
@@ -181,7 +188,9 @@ export default function AdminDashboard() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">Welcome back! Here's what's happening with your business today.</p>
+          <p className="text-gray-600">
+            Welcome back! Here's what's happening with your business today.
+          </p>
         </div>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-500">
@@ -192,8 +201,10 @@ export default function AdminDashboard() {
             disabled={isRefreshing}
             className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+            <RefreshCw
+              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+            <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
           </button>
         </div>
       </div>
@@ -209,22 +220,22 @@ export default function AdminDashboard() {
       {/* Tab Navigation */}
       <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
         <button
-          onClick={() => setActiveTab('overview')}
+          onClick={() => setActiveTab("overview")}
           className={`px-6 py-2 rounded-md font-medium transition-colors flex items-center space-x-2 ${
-            activeTab === 'overview'
-              ? 'bg-white text-purple-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+            activeTab === "overview"
+              ? "bg-white text-purple-600 shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
           }`}
         >
           <BarChart3 className="h-4 w-4" />
           <span>Overview</span>
         </button>
         <button
-          onClick={() => setActiveTab('analytics')}
+          onClick={() => setActiveTab("analytics")}
           className={`px-6 py-2 rounded-md font-medium transition-colors flex items-center space-x-2 ${
-            activeTab === 'analytics'
-              ? 'bg-white text-purple-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+            activeTab === "analytics"
+              ? "bg-white text-purple-600 shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
           }`}
         >
           <Activity className="h-4 w-4" />
@@ -233,7 +244,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'overview' && (
+      {activeTab === "overview" && (
         <>
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -243,7 +254,9 @@ export default function AdminDashboard() {
                   <DollarSign className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Revenue
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900">
                     ${stats.totalRevenue.toFixed(2)}
                   </p>
@@ -257,7 +270,9 @@ export default function AdminDashboard() {
                   <ShoppingCart className="h-6 w-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Transactions</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Transactions
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {stats.totalTransactions}
                   </p>
@@ -271,7 +286,9 @@ export default function AdminDashboard() {
                   <Users className="h-6 w-6 text-purple-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Customers</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Customers
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {stats.totalCustomers}
                   </p>
@@ -285,7 +302,9 @@ export default function AdminDashboard() {
                   <AlertTriangle className="h-6 w-6 text-red-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Low Stock Items</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Low Stock Items
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900">
                     {stats.lowStockProducts}
                   </p>
@@ -299,7 +318,9 @@ export default function AdminDashboard() {
             <div className="bg-white p-6 rounded-lg shadow">
               <div className="flex items-center mb-4">
                 <Calendar className="h-5 w-5 text-gray-400 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900">Today's Performance</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Today's Performance
+                </h3>
               </div>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -317,7 +338,12 @@ export default function AdminDashboard() {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Average Order</span>
                   <span className="text-lg font-semibold text-purple-600">
-                    ${stats.todayTransactions > 0 ? (stats.todayRevenue / stats.todayTransactions).toFixed(2) : '0.00'}
+                    $
+                    {stats.todayTransactions > 0
+                      ? (stats.todayRevenue / stats.todayTransactions).toFixed(
+                          2,
+                        )
+                      : "0.00"}
                   </span>
                 </div>
               </div>
@@ -326,16 +352,26 @@ export default function AdminDashboard() {
             <div className="bg-white p-6 rounded-lg shadow">
               <div className="flex items-center mb-4">
                 <BarChart3 className="h-5 w-5 text-gray-400 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900">Top Products</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Top Products
+                </h3>
               </div>
               <div className="space-y-3">
                 {topProducts.length > 0 ? (
                   topProducts.slice(0, 5).map((product, index) => (
-                    <div key={index} className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 truncate">{product.name}</span>
+                    <div
+                      key={index}
+                      className="flex justify-between items-center"
+                    >
+                      <span className="text-sm text-gray-600 truncate">
+                        {product.name}
+                      </span>
                       <div className="text-right">
                         <div className="text-sm font-semibold text-gray-900">
-                          ${(parseFloat(product.total_revenue.toString()) || 0).toFixed(2)}
+                          $
+                          {(
+                            parseFloat(product.total_revenue.toString()) || 0
+                          ).toFixed(2)}
                         </div>
                         <div className="text-xs text-gray-500">
                           {parseInt(product.total_sold.toString()) || 0} sold
@@ -344,7 +380,9 @@ export default function AdminDashboard() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">No sales data available</p>
+                  <p className="text-sm text-gray-500">
+                    No sales data available
+                  </p>
                 )}
               </div>
             </div>
@@ -355,12 +393,19 @@ export default function AdminDashboard() {
             <div className="bg-white p-6 rounded-lg shadow">
               <div className="flex items-center mb-4">
                 <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900">Low Stock Alert</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Low Stock Alert
+                </h3>
               </div>
               <div className="space-y-3">
                 {lowStockProducts.map((product, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                    <span className="text-sm font-medium text-gray-900">{product.name}</span>
+                  <div
+                    key={index}
+                    className="flex justify-between items-center p-3 bg-red-50 rounded-lg"
+                  >
+                    <span className="text-sm font-medium text-gray-900">
+                      {product.name}
+                    </span>
                     <div className="text-right">
                       <div className="text-sm font-semibold text-red-600">
                         {product.current_stock} left
@@ -377,35 +422,47 @@ export default function AdminDashboard() {
         </>
       )}
 
-      {activeTab === 'analytics' && (
+      {activeTab === "analytics" && (
         <div className="space-y-6">
-          <Suspense fallback={
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-                <div className="h-64 bg-gray-200 rounded"></div>
+          <Suspense
+            fallback={
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+                  <div className="h-64 bg-gray-200 rounded"></div>
+                </div>
               </div>
-            </div>
-          }>
+            }
+          >
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Power BI Dashboard</h3>
-              <p className="text-gray-600 mb-4">Real-time analytics and insights</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Power BI Dashboard
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Real-time analytics and insights
+              </p>
               <div className="bg-gray-100 h-64 rounded-lg flex items-center justify-center">
-                <p className="text-gray-500">Power BI dashboard temporarily disabled for stability</p>
+                <p className="text-gray-500">
+                  Power BI dashboard temporarily disabled for stability
+                </p>
               </div>
             </div>
           </Suspense>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Power BI Integration Active</h4>
+            <h4 className="font-semibold text-green-900 mb-2">
+              ✅ Power BI Integration Active
+            </h4>
             <p className="text-green-800 text-sm mb-2">
-              Your Power BI dashboard is now embedded and receiving real-time data!
+              Your Power BI dashboard is now embedded and receiving real-time
+              data!
             </p>
             <p className="text-green-600 text-xs">
-              Data updates automatically every 30 seconds along with your admin dashboard.
+              Data updates automatically every 30 seconds along with your admin
+              dashboard.
             </p>
           </div>
         </div>
       )}
     </div>
   );
-} 
+}

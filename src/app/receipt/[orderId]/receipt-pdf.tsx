@@ -1,4 +1,5 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { CURRENCY } from '@/lib/utils';
 
 export type ReceiptData = {
   orderId: string;
@@ -77,7 +78,7 @@ export function ReceiptDocument({ data }: { data: ReceiptData }) {
           <View key={item.id} style={s.itemRow}>
             <Text style={s.itemName}>{item.name}</Text>
             <Text style={s.itemQty}>× {item.quantity}</Text>
-            <Text style={s.itemTotal}>${(item.unitPrice * item.quantity).toFixed(2)}</Text>
+            <Text style={s.itemTotal}>{CURRENCY} {(item.unitPrice * item.quantity).toFixed(2)}</Text>
           </View>
         ))}
 
@@ -85,7 +86,7 @@ export function ReceiptDocument({ data }: { data: ReceiptData }) {
 
         <View style={s.totalRow}>
           <Text style={s.totalLabel}>Total</Text>
-          <Text style={s.totalValue}>${data.total.toFixed(2)}</Text>
+          <Text style={s.totalValue}>{CURRENCY} {data.total.toFixed(2)}</Text>
         </View>
 
         <Text style={s.footer}>Thank you for your purchase!</Text>

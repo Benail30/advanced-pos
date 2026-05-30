@@ -1,6 +1,7 @@
 'use client';
 
 import { Printer } from 'lucide-react';
+import { CURRENCY } from '@/lib/utils';
 
 interface ReceiptProps {
   items: {
@@ -51,7 +52,7 @@ export function Receipt({
               <span className="font-medium">{item.name}</span>
               <span className="text-gray-600 ml-2">x{item.quantity}</span>
             </div>
-            <span>${(item.price * item.quantity).toFixed(2)}</span>
+            <span>{CURRENCY} {(item.price * item.quantity).toFixed(2)}</span>
           </div>
         ))}
       </div>
@@ -59,15 +60,15 @@ export function Receipt({
       <div className="mt-4 space-y-2">
         <div className="flex justify-between">
           <span>Subtotal:</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>{CURRENCY} {subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between">
           <span>Tax:</span>
-          <span>${tax.toFixed(2)}</span>
+          <span>{CURRENCY} {tax.toFixed(2)}</span>
         </div>
         <div className="flex justify-between font-bold text-lg">
           <span>Total:</span>
-          <span>${total.toFixed(2)}</span>
+          <span>{CURRENCY} {total.toFixed(2)}</span>
         </div>
       </div>
 
@@ -85,7 +86,7 @@ export function Receipt({
         {change !== undefined && change > 0 && (
           <div className="flex justify-between">
             <span className="text-gray-600">Change:</span>
-            <span className="font-medium text-green-600">${change.toFixed(2)}</span>
+            <span className="font-medium text-green-600">{CURRENCY} {change.toFixed(2)}</span>
           </div>
         )}
       </div>

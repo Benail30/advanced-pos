@@ -10,6 +10,7 @@ import {
   ShoppingCart, Search, Package, Plus, Minus, Trash2,
   CreditCard, Banknote, Smartphone, CheckCircle, X,
 } from 'lucide-react';
+import { CURRENCY } from '@/lib/utils';
 
 interface Product {
   id: string;
@@ -209,7 +210,7 @@ export default function POSPage() {
                   </div>
                   <p className="text-sm font-medium text-gray-900 leading-tight line-clamp-2">{product.name}</p>
                   <p className="text-xs text-gray-400 mt-0.5">Stock: {product.stock}</p>
-                  <p className="text-base font-bold text-blue-600 mt-1">${product.price.toFixed(2)}</p>
+                  <p className="text-base font-bold text-blue-600 mt-1">{CURRENCY} {product.price.toFixed(2)}</p>
                 </button>
               ))}
             </div>
@@ -260,7 +261,7 @@ export default function POSPage() {
                     <Plus className="h-3 w-3" />
                   </button>
                 </div>
-                <p className="text-sm font-semibold text-blue-600">${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="text-sm font-semibold text-blue-600">{CURRENCY} {(item.price * item.quantity).toFixed(2)}</p>
               </div>
             </div>
           ))}
@@ -298,7 +299,7 @@ export default function POSPage() {
         <div className="p-3 border-t space-y-3">
           <div className="flex justify-between text-lg font-bold">
             <span>Total</span>
-            <span className="text-blue-600">${subtotal.toFixed(2)}</span>
+            <span className="text-blue-600">{CURRENCY} {subtotal.toFixed(2)}</span>
           </div>
           <Button
             onClick={() => setShowCheckout(true)}
@@ -319,13 +320,13 @@ export default function POSPage() {
               {cart.map(i => (
                 <div key={i.id} className="flex justify-between">
                   <span>{i.name} × {i.quantity}</span>
-                  <span>${(i.price * i.quantity).toFixed(2)}</span>
+                  <span>{CURRENCY} {(i.price * i.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
             <div className="border-t pt-3 flex justify-between font-bold text-gray-900">
               <span>Total</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{CURRENCY} {subtotal.toFixed(2)}</span>
             </div>
             {customerName && (
               <p className="text-sm text-gray-500">Customer: <span className="font-medium text-gray-800">{customerName}</span></p>
@@ -353,7 +354,7 @@ export default function POSPage() {
               </div>
               <h2 className="text-xl font-bold text-gray-900">Sale Complete!</h2>
               <p className="text-sm text-gray-500">Order #{completedOrder.id}</p>
-              <p className="text-2xl font-bold text-green-600">${completedOrder.total.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-green-600">{CURRENCY} {completedOrder.total.toFixed(2)}</p>
             </div>
 
             <div className="flex flex-col items-center gap-2">

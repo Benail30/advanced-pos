@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Search } from 'lucide-react';
+import { CURRENCY } from '@/lib/utils';
 
 interface Product {
   id: string;
@@ -81,7 +82,7 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
               </div>
               <div className="p-3">
                 <h3 className="font-medium text-sm truncate">{product.name}</h3>
-                <p className="text-gray-500 text-sm">${product.price.toFixed(2)}</p>
+                <p className="text-gray-500 text-sm">{CURRENCY} {product.price.toFixed(2)}</p>
               </div>
             </div>
           ))}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CreditCard, Wallet, Receipt, Banknote, Gift } from 'lucide-react';
+import { CURRENCY } from '@/lib/utils';
 
 interface CheckoutProps {
   total: number;
@@ -87,7 +88,7 @@ export function Checkout({ total, onComplete }: CheckoutProps) {
       
       <div className="mb-6">
         <p className="text-gray-600 mb-2">Total Amount</p>
-        <p className="text-2xl font-bold">${total.toFixed(2)}</p>
+        <p className="text-2xl font-bold">{CURRENCY} {total.toFixed(2)}</p>
       </div>
 
       <div className="mb-6">
@@ -179,14 +180,14 @@ export function Checkout({ total, onComplete }: CheckoutProps) {
           />
           {change > 0 && (
             <p className="mt-2 text-green-600">
-              Change: ${change.toFixed(2)}
+              Change: {CURRENCY} {change.toFixed(2)}
             </p>
           )}
         </div>
       ) : selectedMethod === 'split_payment' ? (
         <div className="mb-6">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-600">Remaining Amount: ${remainingAmount.toFixed(2)}</p>
+            <p className="text-gray-600">Remaining Amount: {CURRENCY} {remainingAmount.toFixed(2)}</p>
             <button
               onClick={handleSplitPaymentAdd}
               className="text-blue-500 hover:text-blue-600"

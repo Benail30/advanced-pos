@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Printer, Download, Mail, X } from 'lucide-react';
+import { CURRENCY } from '@/lib/utils';
 
 interface InvoiceItem {
   id: string;
@@ -106,7 +107,7 @@ export default function Invoice({ invoice, onClose, showActions = true }: Invoic
 
   const handleEmail = () => {
     const subject = `Invoice ${invoice.invoice_number}`;
-    const body = `Please find attached invoice ${invoice.invoice_number} for the amount of $${invoice.total_amount.toFixed(2)}.`;
+    const body = `Please find attached invoice ${invoice.invoice_number} for the amount of ${CURRENCY} ${invoice.total_amount.toFixed(2)}.`;
     
     if (invoice.customer_email) {
       window.open(`mailto:${invoice.customer_email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
@@ -247,8 +248,8 @@ export default function Invoice({ invoice, onClose, showActions = true }: Invoic
                     <td className="border border-gray-300 p-3">{item.product_name}</td>
                     <td className="border border-gray-300 p-3 text-gray-600">{item.sku}</td>
                     <td className="border border-gray-300 p-3 text-center">{item.quantity}</td>
-                    <td className="border border-gray-300 p-3 text-right">${item.unit_price.toFixed(2)}</td>
-                    <td className="border border-gray-300 p-3 text-right font-semibold">${item.subtotal.toFixed(2)}</td>
+                    <td className="border border-gray-300 p-3 text-right">{CURRENCY} {item.unit_price.toFixed(2)}</td>
+                    <td className="border border-gray-300 p-3 text-right font-semibold">{CURRENCY} {item.subtotal.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -261,21 +262,21 @@ export default function Invoice({ invoice, onClose, showActions = true }: Invoic
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal:</span>
-                  <span className="font-semibold">${invoice.subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">{CURRENCY} {invoice.subtotal.toFixed(2)}</span>
                 </div>
                 {invoice.discount_amount > 0 && (
                   <div className="flex justify-between text-red-600">
                     <span>Discount:</span>
-                    <span>-${invoice.discount_amount.toFixed(2)}</span>
+                    <span>-{CURRENCY} {invoice.discount_amount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax (8.25%):</span>
-                  <span className="font-semibold">${invoice.tax_amount.toFixed(2)}</span>
+                  <span className="font-semibold">{CURRENCY} {invoice.tax_amount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t border-gray-300 pt-2">
                   <span>Total:</span>
-                  <span className="text-green-600">${invoice.total_amount.toFixed(2)}</span>
+                  <span className="text-green-600">{CURRENCY} {invoice.total_amount.toFixed(2)}</span>
                 </div>
               </div>
             </div>

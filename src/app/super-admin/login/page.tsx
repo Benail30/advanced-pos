@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -10,8 +11,16 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 
-export default function SuperAdminLoginPage() {
+function safeRedirect(url: string | null, fallback: string): string {
+  if (url && url.startsWith('/') && !url.startsWith('//')) return url;
+  return fallback;
+}
+
+function SuperAdminLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = safeRedirect(searchParams.get('callbackUrl'), '/super-admin/dashboard');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,31 +31,27 @@ export default function SuperAdminLoginPage() {
     setError('');
     setLoading(true);
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
-
+    const result = await signIn('credentials', { email, password, redirect: false });
     setLoading(false);
 
     if (result?.error) {
       setError('Invalid credentials');
-    } else {
-      router.push('/super-admin/dashboard');
+      return;
     }
+
+    router.push(callbackUrl);
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-4">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors w-fit"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </Link>
+    <div className="w-full max-w-sm space-y-4">
+      <Link
+        href="/"
+        className="flex items-center gap-1.5 text-slate-400 hover:text-white text-sm transition-colors w-fit"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to home
+      </Link>
+
       <Card className="bg-slate-800 border-slate-700">
         <CardHeader className="space-y-1 pb-4">
           <CardTitle className="text-xl font-semibold text-center text-white">
@@ -56,9 +61,7 @@ export default function SuperAdminLoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-300">
-                Email
-              </Label>
+              <Label htmlFor="email" className="text-slate-300">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -72,9 +75,7 @@ export default function SuperAdminLoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-slate-300">
-                Password
-              </Label>
+              <Label htmlFor="password" className="text-slate-300">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -87,9 +88,7 @@ export default function SuperAdminLoginPage() {
               />
             </div>
 
-            {error && (
-              <p className="text-sm text-red-400 text-center">{error}</p>
-            )}
+            {error && <p className="text-sm text-red-400 text-center">{error}</p>}
 
             <Button
               type="submit"
@@ -101,7 +100,16 @@ export default function SuperAdminLoginPage() {
           </form>
         </CardContent>
       </Card>
-      </div>
+    </div>
+  );
+}
+
+export default function SuperAdminLoginPage() {
+  return (
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+      <Suspense fallback={<div className="w-full max-w-sm h-64 bg-slate-800 rounded-lg animate-pulse" />}>
+        <SuperAdminLoginForm />
+      </Suspense>
     </div>
   );
 }
